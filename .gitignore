@@ -1,12 +1,49 @@
-# Markdown
-*.md
 __pycache__/
 *.pyc
+*.pyo
+
 # Local secrets — do not commit
 .env
 .env.local
 .env.compose
 *.pem
 
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Python virtual environments
+venv/
+**/venv/
+.venv/
+**/.venv/
+
+# Node
+node_modules/
+**/node_modules/
+
 # Frontend (Tailwind build)
-frontend/node_modules/
+frontend/static/css/output.css
+frontend/static/js/
+
+# Web SPA (Vite)
+web/dist/
+
+# Large local tools — never commit
+google-cloud-sdk/
+google-cloud-cli-*.tar.gz
+*.tar.gz
+
+# Fly.io personal overrides
+fly.pocketii-*.toml
+
+# IDE
+.vscode/
+.idea/
+
+# Test artifacts
+.pytest_cache/
+**/.pytest_cache/
+coverage/
+*.coverage
+htmlcov/
