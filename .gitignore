@@ -22,9 +22,8 @@ venv/
 node_modules/
 **/node_modules/
 
-# Frontend (Tailwind build)
+# Frontend build leftovers (no build pipeline now — static/js and compiled app.tw.css are committed source)
 frontend/static/css/output.css
-frontend/static/js/
 
 # Web SPA (Vite)
 web/dist/

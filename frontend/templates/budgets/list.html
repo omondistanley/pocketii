@@ -7,7 +7,7 @@
         <h1 class="page-title">Budgets</h1>
         <p class="page-meta" id="budget-period"></p>
     </div>
-    <a href="/budgets/add" class="btn btn-primary icon-btn-label"><span class="material-symbols-rounded">add</span> New Budget</a>
+    <a href="/budgets/add" class="btn btn-primary icon-btn-label"><i data-lucide="plus"></i> New Budget</a>
 </div>
 
 <!-- Stats row -->
@@ -33,7 +33,7 @@
 </div>
 
 <div class="row-gap-md section-block">
-    <button type="button" id="budget-alerts-evaluate-btn" class="btn btn-ghost btn-sm icon-btn-label"><span class="material-symbols-rounded">notifications_active</span> Evaluate alerts</button>
+    <button type="button" id="budget-alerts-evaluate-btn" class="btn btn-ghost btn-sm icon-btn-label"><i data-lucide="bell-ring"></i> Evaluate alerts</button>
     <p id="budget-alerts-status" class="form-hint" style="margin:0;"></p>
 </div>
 
@@ -75,7 +75,7 @@
     var periodEl      = document.getElementById('budget-period');
     var listEl        = document.getElementById('budgets-categories-list');
 
-    var CAT_EMOJI = { 1:'<span class="material-symbols-rounded">restaurant</span>', 2:'<span class="material-symbols-rounded">directions_car</span>', 3:'<span class="material-symbols-rounded">flight</span>', 4:'<span class="material-symbols-rounded">build</span>', 5:'<span class="material-symbols-rounded">theater_comedy</span>', 6:'<span class="material-symbols-rounded">medical_services</span>', 7:'<span class="material-symbols-rounded">shopping_bag</span>', 8:'<span class="material-symbols-rounded">assignment</span>' };
+    var CAT_EMOJI = { 1:'<i data-lucide="utensils"></i>', 2:'<i data-lucide="car"></i>', 3:'<i data-lucide="plane"></i>', 4:'<i data-lucide="wrench"></i>', 5:'<i data-lucide="drama"></i>', 6:'<i data-lucide="stethoscope"></i>', 7:'<i data-lucide="shopping-bag"></i>', 8:'<i data-lucide="clipboard-list"></i>' };
 
     function fmt(val) {
         if (val == null || val === '') return '$0.00';
@@ -85,14 +85,14 @@
 
     function getCatEmoji(code, name) {
         var n = (name || '').toLowerCase();
-        if (n.indexOf('food') !== -1 || n.indexOf('grocery') !== -1 || n.indexOf('restaurant') !== -1) return '<span class="material-symbols-rounded">restaurant</span>';
-        if (n.indexOf('transport') !== -1 || n.indexOf('car') !== -1) return '<span class="material-symbols-rounded">directions_car</span>';
-        if (n.indexOf('travel') !== -1) return '<span class="material-symbols-rounded">flight</span>';
-        if (n.indexOf('entertain') !== -1 || n.indexOf('movie') !== -1) return '<span class="material-symbols-rounded">theater_comedy</span>';
-        if (n.indexOf('health') !== -1 || n.indexOf('medical') !== -1) return '<span class="material-symbols-rounded">medical_services</span>';
-        if (n.indexOf('shop') !== -1 || n.indexOf('cloth') !== -1) return '<span class="material-symbols-rounded">shopping_bag</span>';
-        if (n.indexOf('hous') !== -1 || n.indexOf('rent') !== -1) return '<span class="material-symbols-rounded">home</span>';
-        return CAT_EMOJI[code] || '<span class="material-symbols-rounded">assignment</span>';
+        if (n.indexOf('food') !== -1 || n.indexOf('grocery') !== -1 || n.indexOf('restaurant') !== -1) return '<i data-lucide="utensils"></i>';
+        if (n.indexOf('transport') !== -1 || n.indexOf('car') !== -1) return '<i data-lucide="car"></i>';
+        if (n.indexOf('travel') !== -1) return '<i data-lucide="plane"></i>';
+        if (n.indexOf('entertain') !== -1 || n.indexOf('movie') !== -1) return '<i data-lucide="drama"></i>';
+        if (n.indexOf('health') !== -1 || n.indexOf('medical') !== -1) return '<i data-lucide="stethoscope"></i>';
+        if (n.indexOf('shop') !== -1 || n.indexOf('cloth') !== -1) return '<i data-lucide="shopping-bag"></i>';
+        if (n.indexOf('hous') !== -1 || n.indexOf('rent') !== -1) return '<i data-lucide="home"></i>';
+        return CAT_EMOJI[code] || '<i data-lucide="clipboard-list"></i>';
     }
 
     function load() {
@@ -147,7 +147,7 @@
 
             if (budgets.length === 0) {
                 listEl.innerHTML = '<div class="card" style="text-align:center;padding:40px;grid-column:1/-1;">' +
-                    '<div style="font-size:40px;margin-bottom:12px;"><span class="material-symbols-rounded">target</span></div>' +
+                    '<div style="font-size:40px;margin-bottom:12px;"><i data-lucide="target"></i></div>' +
                     '<p style="font-size:15px;font-weight:600;color:var(--s700);margin-bottom:8px;">No budgets yet</p>' +
                     '<p style="font-size:13px;color:var(--s500);margin-bottom:16px;">Set monthly limits to track your spending.</p>' +
                     '<a href="/budgets/add" class="btn btn-primary">+ Create Budget</a></div>';

@@ -71,8 +71,8 @@
         <div class="m-quick-actions-grid">
             <a href="/expenses/add" class="btn btn-primary btn-sm btn-block-centered">+ Expense</a>
             <a href="/income/add" class="btn btn-ghost btn-sm btn-block-centered">+ Income</a>
-            <a href="/link-bank" class="btn btn-ghost btn-sm btn-block-centered"><span class="material-symbols-rounded">account_balance</span> Link Bank</a>
-            <a href="/reports" class="btn btn-ghost btn-sm btn-block-centered"><span class="material-symbols-rounded">dashboard</span> Reports</a>
+            <a href="/link-bank" class="btn btn-ghost btn-sm btn-block-centered"><i data-lucide="landmark"></i> Link Bank</a>
+            <a href="/reports" class="btn btn-ghost btn-sm btn-block-centered"><i data-lucide="layout-dashboard"></i> Reports</a>
         </div>
     </div>
 </div>
@@ -87,34 +87,37 @@
             <button type="button" class="btn btn-ghost btn-sm" id="dashboard-checklist-dismiss">Dismiss</button>
         </div>
         <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-            <a href="/link-bank" class="btn btn-secondary btn-sm"><span class="material-symbols-rounded">account_balance</span> Link bank</a>
+            <a href="/link-bank" class="btn btn-secondary btn-sm"><i data-lucide="landmark"></i> Link bank</a>
             <a href="/expenses/add" class="btn btn-secondary btn-sm">+ Log expense</a>
             <a href="/budgets/add" class="btn btn-secondary btn-sm">+ Create budget</a>
             <a href="/goals/add" class="btn btn-secondary btn-sm">+ Add goal</a>
         </div>
     </div>
 
-    <!-- Row 1: 4 stat cards -->
-    <div class="grid-4 mb-24">
-        <div class="stat-card">
-            <div class="stat-label">Running Balance</div>
-            <div class="stat-value" id="dashboard-total-balance">—</div>
-            <div class="stat-change" id="dashboard-balance-change"></div>
+    <!-- Row 1: Net-worth hero + savings -->
+    <div class="dash-hero-row">
+        <div class="nw-hero">
+            <div class="nw-label">Running Balance</div>
+            <div class="nw-value" id="dashboard-total-balance">—</div>
+            <div class="nw-change" id="dashboard-balance-change"></div>
+            <div class="nw-mini">
+                <div class="nw-mini-item">
+                    <div class="l">Income (this month)</div>
+                    <div class="v" id="dashboard-income">—</div>
+                    <div class="stat-change up" id="dashboard-income-change"></div>
+                </div>
+                <div class="nw-mini-item">
+                    <div class="l">Expenses (this month)</div>
+                    <div class="v" id="dashboard-expenses">—</div>
+                    <div class="stat-change down" id="dashboard-expense-change"></div>
+                </div>
+            </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-label">Income (this month)</div>
-            <div class="stat-value" id="dashboard-income">—</div>
-            <div class="stat-change up" id="dashboard-income-change"></div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">Expenses (this month)</div>
-            <div class="stat-value" id="dashboard-expenses">—</div>
-            <div class="stat-change down" id="dashboard-expense-change"></div>
-        </div>
-        <div class="stat-card">
+        <div class="stat-card" style="display:flex;flex-direction:column;justify-content:center;">
             <div class="stat-label">Savings Rate</div>
-            <div class="stat-value" id="dashboard-savings-rate">—</div>
+            <div class="stat-value" id="dashboard-savings-rate" style="font-size:34px;">—</div>
             <div class="stat-change" id="dashboard-savings-change"></div>
+            <p class="muted" style="font-size:12px;margin:10px 0 0;">Share of income kept this month.</p>
         </div>
     </div>
 
@@ -167,7 +170,7 @@
         <div style="display:flex;flex-direction:column;gap:16px;">
             <!-- AI Insight card -->
             <div class="ai-insight-card">
-                <div class="ai-label"><span class="material-symbols-rounded" style="font-size:12px;vertical-align:middle;">auto_awesome</span> AI Insight</div>
+                <div class="ai-label"><i data-lucide="sparkles" style="width:12px;height:12px;vertical-align:middle;"></i> AI Insight</div>
                 <div class="ai-text" id="dashboard-ai-insight-text">Run analysis on the <a href="/recommendations" style="color:var(--brand);">Recommendations</a> page for personalised investment and budget insights.</div>
                 <div class="ai-conf-row" id="dashboard-ai-conf-row" style="display:none;">
                     <span class="ai-conf-label">Confidence</span>
@@ -279,11 +282,11 @@
         return (mon[m] || p[1]) + ' ' + d;
     }
 
-    var CAT_EMOJI = {'food':'<span class="material-symbols-rounded">restaurant</span>','grocery':'<span class="material-symbols-rounded">restaurant</span>','restaurant':'<span class="material-symbols-rounded">restaurant</span>','transport':'<span class="material-symbols-rounded">directions_car</span>','car':'<span class="material-symbols-rounded">directions_car</span>','travel':'<span class="material-symbols-rounded">flight</span>','entertainment':'<span class="material-symbols-rounded">theater_comedy</span>','health':'<span class="material-symbols-rounded">medical_services</span>','medical':'<span class="material-symbols-rounded">medical_services</span>','shopping':'<span class="material-symbols-rounded">shopping_bag</span>','housing':'<span class="material-symbols-rounded">home</span>','rent':'<span class="material-symbols-rounded">home</span>','utilities':'<span class="material-symbols-rounded">lightbulb</span>','salary':'<span class="material-symbols-rounded">work</span>','income':'<span class="material-symbols-rounded">work</span>'};
+    var CAT_EMOJI = {'food':'<i data-lucide="utensils"></i>','grocery':'<i data-lucide="utensils"></i>','restaurant':'<i data-lucide="utensils"></i>','transport':'<i data-lucide="car"></i>','car':'<i data-lucide="car"></i>','travel':'<i data-lucide="plane"></i>','entertainment':'<i data-lucide="drama"></i>','health':'<i data-lucide="stethoscope"></i>','medical':'<i data-lucide="stethoscope"></i>','shopping':'<i data-lucide="shopping-bag"></i>','housing':'<i data-lucide="home"></i>','rent':'<i data-lucide="home"></i>','utilities':'<i data-lucide="lightbulb"></i>','salary':'<i data-lucide="briefcase"></i>','income':'<i data-lucide="briefcase"></i>'};
     function getCatEmoji(name) {
         var n = (name || '').toLowerCase();
         for (var k in CAT_EMOJI) { if (n.indexOf(k) !== -1) return CAT_EMOJI[k]; }
-        return '<span class="material-symbols-rounded">assignment</span>';
+        return '<i data-lucide="clipboard-list"></i>';
     }
 
     function loadRecurringPanel() {
@@ -519,11 +522,11 @@
     var mTxnList    = document.getElementById('m-dashboard-txn-list');
     var mBudgets    = document.getElementById('m-dashboard-budgets');
 
-    var CAT_EMOJI = {'food':'<span class="material-symbols-rounded">restaurant</span>','grocery':'<span class="material-symbols-rounded">restaurant</span>','restaurant':'<span class="material-symbols-rounded">restaurant</span>','transport':'<span class="material-symbols-rounded">directions_car</span>','car':'<span class="material-symbols-rounded">directions_car</span>','travel':'<span class="material-symbols-rounded">flight</span>','entertainment':'<span class="material-symbols-rounded">theater_comedy</span>','health':'<span class="material-symbols-rounded">medical_services</span>','medical':'<span class="material-symbols-rounded">medical_services</span>','shopping':'<span class="material-symbols-rounded">shopping_bag</span>','housing':'<span class="material-symbols-rounded">home</span>','rent':'<span class="material-symbols-rounded">home</span>','utilities':'<span class="material-symbols-rounded">lightbulb</span>','salary':'<span class="material-symbols-rounded">work</span>','income':'<span class="material-symbols-rounded">work</span>'};
+    var CAT_EMOJI = {'food':'<i data-lucide="utensils"></i>','grocery':'<i data-lucide="utensils"></i>','restaurant':'<i data-lucide="utensils"></i>','transport':'<i data-lucide="car"></i>','car':'<i data-lucide="car"></i>','travel':'<i data-lucide="plane"></i>','entertainment':'<i data-lucide="drama"></i>','health':'<i data-lucide="stethoscope"></i>','medical':'<i data-lucide="stethoscope"></i>','shopping':'<i data-lucide="shopping-bag"></i>','housing':'<i data-lucide="home"></i>','rent':'<i data-lucide="home"></i>','utilities':'<i data-lucide="lightbulb"></i>','salary':'<i data-lucide="briefcase"></i>','income':'<i data-lucide="briefcase"></i>'};
     function getCatEmoji(name) {
         var n = (name || '').toLowerCase();
         for (var k in CAT_EMOJI) { if (n.indexOf(k) !== -1) return CAT_EMOJI[k]; }
-        return '<span class="material-symbols-rounded">assignment</span>';
+        return '<i data-lucide="clipboard-list"></i>';
     }
     function fmt(v) { var n = parseFloat(v); return isNaN(n) ? '—' : '$' + n.toFixed(2); }
     function fmtDateShort(val) {
@@ -739,7 +742,7 @@
                 load: function(cb) { cb(); },
                 render: function() {
                     return '<div style="text-align:center;padding:1rem 0;">'
-                        + '<span class="material-symbols-rounded" style="font-size:3rem;color:#38a169;">check_circle</span>'
+                        + '<i data-lucide="circle-check" style="font-size:3rem;color:#38a169;"></i>'
                         + '<h3 style="font-size:1.1rem;font-weight:700;margin:0.75rem 0 0.5rem;">You\'re up to date</h3>'
                         + '<p class="muted" style="font-size:0.875rem;">Your review is complete. See you next month.</p>'
                         + '</div>';

@@ -192,10 +192,10 @@
         }
         el.innerHTML = items.map(function(n) {
             var cls = unread ? 'notif-item unread' : 'notif-item';
-            var icon = '<span class="material-symbols-rounded">notifications</span>';
+            var icon = '<i data-lucide="bell"></i>';
             var payload = n.payload_json || n.payload || {};
-            if ((n.type || n.notification_type) === 'budget_alert') icon = '<span class="material-symbols-rounded">payments</span>';
-            if ((n.type || n.notification_type) === 'recommendation') icon = '<span class="material-symbols-rounded">smart_toy</span>';
+            if ((n.type || n.notification_type) === 'budget_alert') icon = '<i data-lucide="banknote"></i>';
+            if ((n.type || n.notification_type) === 'recommendation') icon = '<i data-lucide="bot"></i>';
             var action = '';
             if (payload.budget_id) {
                 action = '<a href="/budgets/' + payload.budget_id + '" class="btn btn-primary btn-sm" style="margin-top:8px">View Budget</a>';

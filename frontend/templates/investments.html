@@ -6,25 +6,25 @@
 <div class="page-header">
     <h1 class="page-title">Investments</h1>
     <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
-        <button type="button" id="import-csv-open-btn" class="btn btn-secondary icon-btn-label"><span class="material-symbols-rounded">upload_file</span> Import from Broker CSV</button>
-        <button type="button" id="holdings-add-btn" class="btn btn-primary icon-btn-label"><span class="material-symbols-rounded">add</span> Add holding</button>
+        <button type="button" id="import-csv-open-btn" class="btn btn-secondary icon-btn-label"><i data-lucide="upload"></i> Import from Broker CSV</button>
+        <button type="button" id="holdings-add-btn" class="btn btn-primary icon-btn-label"><i data-lucide="plus"></i> Add holding</button>
     </div>
 </div>
 
 <nav class="tab-bar mb-16" role="tablist" aria-label="Investments views" style="border-bottom:1px solid var(--border-subtle);display:flex;gap:4px;flex-wrap:wrap;">
     <button type="button" class="inv-view-tab tab-btn tab-btn--active" data-inv-view="overview" role="tab" aria-selected="true">Overview</button>
     <button type="button" class="inv-view-tab tab-btn" data-inv-view="holdings" role="tab" aria-selected="false">Holdings</button>
-    <button type="button" class="inv-view-tab tab-btn" data-inv-view="tlh" role="tab" aria-selected="false"><span class="material-symbols-rounded" style="font-size:1rem;vertical-align:middle;">eco</span> Tax Harvest</button>
-    <button type="button" class="inv-view-tab tab-btn" data-inv-view="stress" role="tab" aria-selected="false"><span class="material-symbols-rounded" style="font-size:1rem;vertical-align:middle;">thunderstorm</span> Stress Test</button>
+    <button type="button" class="inv-view-tab tab-btn" data-inv-view="tlh" role="tab" aria-selected="false"><i data-lucide="leaf" style="font-size:1rem;vertical-align:middle;"></i> Tax Harvest</button>
+    <button type="button" class="inv-view-tab tab-btn" data-inv-view="stress" role="tab" aria-selected="false"><i data-lucide="cloud-lightning" style="font-size:1rem;vertical-align:middle;"></i> Stress Test</button>
 </nav>
 
 <!-- Finance Context Strip -->
 <div id="finance-context-strip" style="display:none;background:var(--surface,#f0f7ff);border-left:3px solid #135bec;border-radius:4px;padding:0.6rem 1rem;margin-bottom:1rem;font-size:0.875rem;">
-    <span class="material-symbols-rounded" style="font-size:1rem;vertical-align:middle;margin-right:0.35rem;">account_balance_wallet</span>
+    <i data-lucide="wallet" style="font-size:1rem;vertical-align:middle;margin-right:0.35rem;"></i>
     <span id="finance-context-text"></span>
 </div>
 <div id="inv-north-star-strip" style="display:none;background:var(--surface,#f0f7ff);border-left:3px solid #0ea5e9;border-radius:4px;padding:0.6rem 1rem;margin-bottom:1rem;font-size:0.875rem;">
-    <span class="material-symbols-rounded" style="font-size:1rem;vertical-align:middle;margin-right:0.35rem;">north</span>
+    <i data-lucide="arrow-up" style="font-size:1rem;vertical-align:middle;margin-right:0.35rem;"></i>
     <span id="inv-north-star-text"></span>
     <a id="inv-north-star-link" href="/recommendations" style="margin-left:0.5rem;font-size:0.8125rem;display:none;">Top suggestion →</a>
 </div>
@@ -33,7 +33,7 @@
 <!-- Portfolio Health Score -->
 <div class="card" id="inv-health-card" style="margin-bottom:1rem;">
     <div class="section-head" style="margin-bottom:0.75rem;">
-        <h2 class="section-title-sm"><span class="material-symbols-rounded">favorite</span> Portfolio Health</h2>
+        <h2 class="section-title-sm"><i data-lucide="heart"></i> Portfolio Health</h2>
         <span id="inv-health-badge" class="badge" style="font-size:0.75rem;"></span>
     </div>
     <div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.5rem;">
@@ -69,9 +69,9 @@
 <!-- Gains & loss over time (fixed 90d window; chart always shown; section collapsible) -->
 <div class="card" id="inv-gains-section">
     <div class="section-head inv-gains-card-header" style="margin-bottom: 0.5rem;">
-        <h2 class="section-title-sm"><span class="material-symbols-rounded">monitoring</span> Gains &amp; loss over time</h2>
+        <h2 class="section-title-sm"><i data-lucide="activity"></i> Gains &amp; loss over time</h2>
         <button type="button" class="btn btn-sm btn-ghost icon-btn-label" id="inv-gains-collapse-toggle" aria-expanded="true" aria-controls="inv-gains-body">
-            <span class="material-symbols-rounded">expand_less</span>
+            <i data-lucide="chevron-up"></i>
             Hide chart
         </button>
     </div>
@@ -152,7 +152,7 @@
 <div id="inv-view-holdings" style="display: none;">
 <div class="card">
     <div class="section-head" style="margin-bottom: 1rem;">
-        <h2 class="section-title-sm"><span class="material-symbols-rounded">account_balance_wallet</span> Holdings</h2>
+        <h2 class="section-title-sm"><i data-lucide="wallet"></i> Holdings</h2>
     </div>
     <p class="muted" style="margin-bottom: 0.75rem; font-size: 0.875rem;">
         Add symbols (e.g. AAPL, VOO) with quantity and average cost. Connect Alpaca on the
@@ -184,7 +184,7 @@
 
 <div class="card">
     <div class="section-head" style="margin-bottom:1rem;">
-        <h2 class="section-title-sm"><span class="material-symbols-rounded">donut_large</span> Allocation</h2>
+        <h2 class="section-title-sm"><i data-lucide="pie-chart"></i> Allocation</h2>
         <div style="display:flex;gap:0.5rem;">
             <button type="button" class="btn btn-sm btn-ghost alloc-tab-btn active-tab" data-tab="weights">Weights</button>
             <button type="button" class="btn btn-sm btn-ghost alloc-tab-btn" data-tab="sectors">Sectors</button>
@@ -203,7 +203,7 @@
 <!-- Dividend Calendar (Phase 3) -->
 <div class="card" id="inv-dividend-card" style="margin-top:1rem;">
     <div class="section-head" style="margin-bottom:0.75rem;">
-        <h2 class="section-title-sm"><span class="material-symbols-rounded">calendar_month</span> Dividend Calendar</h2>
+        <h2 class="section-title-sm"><i data-lucide="calendar"></i> Dividend Calendar</h2>
         <button type="button" id="inv-dividend-toggle" class="btn btn-sm btn-ghost">Show</button>
     </div>
     <div id="inv-dividend-body" style="display:none;">
@@ -217,7 +217,7 @@
 
 <!-- Cash Opportunity Cost Strip (Phase 3) -->
 <div id="inv-cash-strip" style="display:none;background:#f0fff4;border-left:3px solid #38a169;border-radius:4px;padding:0.6rem 1rem;margin-top:0.75rem;font-size:0.875rem;">
-    <span class="material-symbols-rounded" style="font-size:1rem;vertical-align:middle;margin-right:0.35rem;">savings</span>
+    <i data-lucide="piggy-bank" style="font-size:1rem;vertical-align:middle;margin-right:0.35rem;"></i>
     <span id="inv-cash-strip-text"></span>
     <span style="font-size:0.75rem;color:var(--text-muted);display:block;margin-top:0.2rem;">This is informational. No affiliate relationship. Actual rates vary.</span>
 </div>
@@ -232,9 +232,9 @@
 <div id="inv-view-tlh" style="display:none;">
     <div class="card">
         <div class="section-head" style="margin-bottom:0.75rem;">
-            <h2 class="section-title-sm"><span class="material-symbols-rounded">eco</span> Tax-Loss Harvesting Opportunities</h2>
+            <h2 class="section-title-sm"><i data-lucide="leaf"></i> Tax-Loss Harvesting Opportunities</h2>
             <button type="button" id="tlh-refresh-btn" class="btn btn-sm btn-ghost icon-btn-label">
-                <span class="material-symbols-rounded">refresh</span> Refresh
+                <i data-lucide="refresh-cw"></i> Refresh
             </button>
         </div>
         <p class="muted" style="font-size:0.875rem;margin-bottom:1rem;">
@@ -245,7 +245,7 @@
         <div id="tlh-list" style="display:flex;flex-direction:column;gap:0.6rem;display:none;"></div>
         <div id="tlh-empty" style="display:none;">
             <div class="empty-state-inline">
-                <span class="material-symbols-rounded empty-icon">check_circle</span>
+                <i data-lucide="circle-check" class="empty-icon"></i>
                 <span class="empty-title">No harvestable losses found</span>
                 <span class="empty-body">All positions have unrealized gains, or losses are below the $200 threshold. Check back after market moves.</span>
             </div>
@@ -258,9 +258,9 @@
 <div id="inv-view-stress" style="display:none;">
     <div class="card">
         <div class="section-head" style="margin-bottom:0.75rem;">
-            <h2 class="section-title-sm"><span class="material-symbols-rounded">thunderstorm</span> Portfolio Stress Test</h2>
+            <h2 class="section-title-sm"><i data-lucide="cloud-lightning"></i> Portfolio Stress Test</h2>
             <button type="button" id="stress-refresh-btn" class="btn btn-sm btn-ghost icon-btn-label">
-                <span class="material-symbols-rounded">refresh</span> Run tests
+                <i data-lucide="refresh-cw"></i> Run tests
             </button>
         </div>
         <p class="muted" style="font-size:0.875rem;margin-bottom:1rem;">
@@ -270,7 +270,7 @@
         <div id="stress-grid" style="display:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0.75rem;"></div>
         <div id="stress-empty" style="display:none;">
             <div class="empty-state-inline">
-                <span class="material-symbols-rounded empty-icon">inventory_2</span>
+                <i data-lucide="package" class="empty-icon"></i>
                 <span class="empty-title">No holdings to stress test</span>
                 <span class="empty-body">Add holdings first, then run the stress test to see scenario impacts.</span>
             </div>
@@ -369,7 +369,7 @@
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
             <h3 id="holding-detail-title" class="modal-title" style="margin:0;"></h3>
             <button type="button" id="holding-detail-close" class="btn btn-ghost" style="padding:0.25rem 0.5rem;">
-                <span class="material-symbols-rounded">close</span>
+                <i data-lucide="x"></i>
             </button>
         </div>
         <div id="holding-detail-body">
@@ -568,7 +568,7 @@
 
         var items = listEl.querySelectorAll('.holding-item');
         if (!items.length) {
-            tbody.innerHTML = '<tr><td colspan="10"><div class="empty-state-inline"><span class="material-symbols-rounded empty-icon">trending_up</span><span class="empty-title">No holdings yet</span><span class="empty-body">Click "+ Add holding" to track a position, or connect Alpaca to auto-sync.</span></div></td></tr>';
+            tbody.innerHTML = '<tr><td colspan="10"><div class="empty-state-inline"><i data-lucide="trending-up" class="empty-icon"></i><span class="empty-title">No holdings yet</span><span class="empty-body">Click "+ Add holding" to track a position, or connect Alpaca to auto-sync.</span></div></td></tr>';
             if (totalEl) totalEl.textContent = '$0.00';
             if (costEl) costEl.textContent = '$0.00';
             if (dayChangeEl) dayChangeEl.textContent = '$0.00';

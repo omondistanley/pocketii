@@ -10,7 +10,7 @@
 
     <!-- Preferences -->
     <div class="card">
-        <h2 class="stat-label" style="margin-bottom: 18px;"><span class="icon-btn-label"><span class="material-symbols-rounded">tune</span> Preferences</span></h2>
+        <h2 class="stat-label" style="margin-bottom: 18px;"><span class="icon-btn-label"><i data-lucide="sliders-horizontal"></i> Preferences</span></h2>
         <div style="display: grid; gap: 16px;">
             <div class="form-group">
                 <label class="form-label" for="settings-theme">Appearance</label>
@@ -20,6 +20,17 @@
                     <option value="system">Match system</option>
                 </select>
                 <p class="form-hint">Same as the menu panel theme control; stored on this device.</p>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="settings-font">Typeface</label>
+                <select id="settings-font" class="form-select" aria-label="Typeface" style="max-width: 260px;">
+                    <option value="manrope">Manrope — default</option>
+                    <option value="serif">Lora — serif</option>
+                    <option value="mono">IBM Plex Mono — monospace</option>
+                    <option value="system">System UI — fast, native</option>
+                    <option value="times">Times New Roman</option>
+                </select>
+                <p class="form-hint">Changes the font across the whole app; stored on this device.</p>
             </div>
             <div class="form-group">
                 <label class="form-label" for="settings-currency">Default currency</label>
@@ -62,7 +73,7 @@
 
     <!-- Household -->
     <div class="card">
-        <h2 class="stat-label" style="margin-bottom: 18px;"><span class="icon-btn-label"><span class="material-symbols-rounded">groups</span> Household</span></h2>
+        <h2 class="stat-label" style="margin-bottom: 18px;"><span class="icon-btn-label"><i data-lucide="users"></i> Household</span></h2>
         <div style="display: grid; gap: 16px;">
             <div class="form-group">
                 <label class="form-label" for="settings-household">Active household</label>
@@ -82,7 +93,7 @@
 
     <!-- Notifications -->
     <div class="card">
-        <h2 class="stat-label" style="margin-bottom: 18px;"><span class="icon-btn-label"><span class="material-symbols-rounded">notifications</span> Notifications</span></h2>
+        <h2 class="stat-label" style="margin-bottom: 18px;"><span class="icon-btn-label"><i data-lucide="bell"></i> Notifications</span></h2>
         <div style="display: grid; gap: 16px;">
             <div class="form-group">
                 <label class="form-label" for="settings-email-digest">Email digest</label>
@@ -103,26 +114,26 @@
     </div>
 
     <div class="card">
-        <h2 class="stat-label" style="margin-bottom: 10px;"><span class="icon-btn-label"><span class="material-symbols-rounded">shield</span> Security &amp; privacy</span></h2>
-        <p class="form-hint" style="margin-bottom: 12px;">No ads. We do not sell your data. Data is used only to run core product features you enable.</p>
+        <h2 class="stat-label" style="margin-bottom: 10px;"><span class="icon-btn-label"><i data-lucide="shield"></i> Security &amp; privacy</span></h2>
+        <p class="form-hint" style="margin-bottom: 12px;">Your data is encrypted and cached on your device to power recommendations and AI insights. Data is used only to run the core product features you enable.</p>
         <a href="/security" class="btn btn-ghost btn-sm">View security summary</a>
     </div>
 
     <!-- Danger zone -->
     <div class="card" style="border-color: #f43f5e33;">
-        <h2 class="stat-label danger-title" style="margin-bottom: 14px;"><span class="icon-btn-label"><span class="material-symbols-rounded">warning</span> Danger zone</span></h2>
+        <h2 class="stat-label danger-title" style="margin-bottom: 14px;"><span class="icon-btn-label"><i data-lucide="triangle-alert"></i> Danger zone</span></h2>
         <p class="form-hint" style="margin-bottom: 14px;">
             Permanently delete your account and all associated data. This action cannot be undone.
         </p>
         <button type="button" id="settings-delete-account" class="btn btn-danger-ghost icon-btn-label">
-            <span class="material-symbols-rounded">delete</span>
+            <i data-lucide="trash-2"></i>
             Delete account
         </button>
     </div>
 
     <!-- iOS Shortcuts -->
     <div class="card">
-        <h2 class="stat-label" style="margin-bottom:14px;"><span class="icon-btn-label"><span class="material-symbols-rounded">ios_share</span> iOS Shortcuts</span></h2>
+        <h2 class="stat-label" style="margin-bottom:14px;"><span class="icon-btn-label"><i data-lucide="share"></i> iOS Shortcuts</span></h2>
         <p class="form-hint" style="margin-bottom:1rem;">
             Add expenses in one tap from Siri or the iOS Shortcuts app.
             Your API token is used to authenticate each request — keep it private.
@@ -133,7 +144,7 @@
                 value="Click 'Show token' to reveal">
             <button type="button" class="btn btn-ghost" id="shortcuts-show-token">Show token</button>
             <button type="button" class="btn btn-ghost icon-btn-label" id="shortcuts-copy-token">
-                <span class="material-symbols-rounded">content_copy</span> Copy
+                <i data-lucide="copy"></i> Copy
             </button>
         </div>
         <p class="form-hint" style="margin-bottom:1rem;">
@@ -141,7 +152,7 @@
             Body: <code style="font-size:0.8125rem;">{"amount": 4.50, "description": "Coffee", "category": "food"}</code>
         </p>
         <a href="#" id="shortcuts-install-link" class="btn btn-secondary icon-btn-label" target="_blank" rel="noopener">
-            <span class="material-symbols-rounded">download</span> Download iCloud Shortcut
+            <i data-lucide="download"></i> Download iCloud Shortcut
         </a>
         <p class="form-hint" style="margin-top:0.5rem;opacity:0.7;">
             The shortcut prompts for amount and description, then calls the endpoint above.
@@ -151,13 +162,29 @@
 
     <!-- Save -->
     <div class="row-gap-md">
-        <button type="submit" class="btn btn-primary icon-btn-label" id="settings-save-btn"><span class="material-symbols-rounded">save</span> Save settings</button>
+        <button type="submit" class="btn btn-primary icon-btn-label" id="settings-save-btn"><i data-lucide="save"></i> Save settings</button>
         <p id="settings-msg" class="form-hint"></p>
     </div>
 
 </form>
 {% endblock %}
 {% block scripts %}
+<script nonce="{{ csp_nonce | default('') }}">
+/* Typeface picker — applies html[data-font] live and persists locally. */
+(function() {
+    var KEY = 'pocketii-font';
+    var sel = document.getElementById('settings-font');
+    if (!sel) return;
+    function apply(v) { document.documentElement.setAttribute('data-font', v); }
+    try { var saved = localStorage.getItem(KEY); if (saved) { sel.value = saved; apply(saved); } } catch (e) {}
+    sel.addEventListener('change', function() {
+        var v = sel.value;
+        apply(v);
+        try { localStorage.setItem(KEY, v); } catch (e) {}
+        if (window.showToast) window.showToast('Typeface updated.', 'success');
+    });
+})();
+</script>
 <script nonce="{{ csp_nonce | default('') }}">
 (function() {
     var API = window.API_BASE || '';

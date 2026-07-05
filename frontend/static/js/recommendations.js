@@ -222,7 +222,7 @@
     statusEl.textContent = statusBits.join(" \u00b7 ");
     var html = '<div class="rec-cards-grid">';
     if (!items.length) {
-      html += '<div class="empty-state-inline"><span class="material-symbols-rounded empty-icon">auto_awesome</span><span class="empty-title">No recommendations on this page</span><span class="empty-body">Try a different page or regenerate recommendations with updated preferences.</span></div>';
+      html += '<div class="empty-state-inline"><i data-lucide="sparkles" class="empty-icon"></i><span class="empty-title">No recommendations on this page</span><span class="empty-body">Try a different page or regenerate recommendations with updated preferences.</span></div>';
     } else {
       items.forEach(function(it, idx) {
         var sym = (it.symbol || "").toUpperCase();
