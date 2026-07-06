@@ -36,82 +36,82 @@
         <!-- SIDEBAR -->
         <aside class="sidebar tw-sidebar-pocket" aria-label="App navigation">
             <div class="sb-logo">
-                <a href="/dashboard" class="sb-logo-brand" style="text-decoration:none;">
-                    <span class="sb-logo-mark"><i data-lucide="target"></i></span>
-                    <span class="sb-logo-text">Pocketii</span>
-                </a>
+                <a href="/dashboard" class="sb-logo-text" style="text-decoration:none;">pocketii</a>
+                <div class="sb-logo-sub">Personal finance</div>
             </div>
 
             <nav class="sb-nav">
-                <div class="sb-section">Overview</div>
+                <div class="sb-section">Core</div>
                 <a href="/dashboard" class="sb-link {% if request.url.path == '/dashboard' %}active{% endif %}">
-                    <span class="icon"><i data-lucide="layout-dashboard"></i></span> Dashboard
+                    <span class="icon"><span class="material-symbols-rounded">dashboard</span></span> Dashboard
                 </a>
                 <a href="/expenses" class="sb-link {% if request.url.path.startswith('/expenses') %}active{% endif %}">
-                    <span class="icon"><i data-lucide="receipt"></i></span> Expenses
+                    <span class="icon"><span class="material-symbols-outlined text-lg">receipt_long</span></span> Expenses
                 </a>
                 <a href="/income" class="sb-link {% if request.url.path.startswith('/income') %}active{% endif %}">
-                    <span class="icon"><i data-lucide="banknote"></i></span> Income
+                    <span class="icon"><span class="material-symbols-rounded">payments</span></span> Income
                 </a>
                 <a href="/transactions" class="sb-link {% if request.url.path == '/transactions' %}active{% endif %}">
-                    <span class="icon"><i data-lucide="arrow-left-right"></i></span> Transactions
+                    <span class="icon"><span class="material-symbols-outlined text-lg">sync_alt</span></span> Transactions
                 </a>
+                <a href="/recurring" class="sb-link {% if request.url.path.startswith('/recurring') and not request.url.path.startswith('/budgets/recurring') %}active{% endif %}">
+                    <span class="icon"><span class="material-symbols-rounded">sync</span></span> Recurring
+                </a>
+
+                <div class="sb-section">Planning</div>
                 <a href="/budgets" class="sb-link {% if request.url.path.startswith('/budgets') %}active{% endif %}">
-                    <span class="icon"><i data-lucide="wallet"></i></span> Budgets
+                    <span class="icon"><span class="material-symbols-outlined text-lg">account_balance_wallet</span></span> Budgets
                     <span id="sidebar-budgets-badge" class="sb-badge" style="display:none;">!</span>
                 </a>
                 <a href="/goals" class="sb-link {% if request.url.path.startswith('/goals') %}active{% endif %}">
-                    <span class="icon"><i data-lucide="piggy-bank"></i></span> Goals
+                    <span class="icon"><span class="material-symbols-rounded">kid_star</span></span> Goals
                 </a>
-                <a href="/investments" class="sb-link {% if request.url.path.startswith('/investments') %}active{% endif %}">
-                    <span class="icon"><i data-lucide="trending-up"></i></span> Investments
+                <a href="/net-worth" class="sb-link {% if request.url.path == '/net-worth' %}active{% endif %}">
+                    <span class="icon"><span class="material-symbols-rounded">diamond</span></span> Net Worth
                 </a>
 
-                <div class="sb-section">Advanced</div>
-                <a href="/net-worth" class="sb-link {% if request.url.path == '/net-worth' %}active{% endif %}">
-                    <span class="icon"><i data-lucide="gem"></i></span> Net Worth
+                <div class="sb-section">Invest &amp; AI</div>
+                <a href="/investments" class="sb-link {% if request.url.path.startswith('/investments') %}active{% endif %}">
+                    <span class="icon"><span class="material-symbols-rounded">trending_up</span></span> Investments
                 </a>
                 <a href="/recommendations" class="sb-link {% if request.url.path.startswith('/recommendations') %}active{% endif %}">
-                    <span class="icon"><i data-lucide="candlestick-chart"></i></span> AI Picks
+                    <span class="icon"><span class="material-symbols-rounded">candlestick_chart</span></span> AI Picks
                 </a>
                 <a href="/risk-profile" class="sb-link {% if request.url.path == '/risk-profile' %}active{% endif %}">
-                    <span class="icon"><i data-lucide="sliders-horizontal"></i></span> Risk Profile
+                    <span class="icon"><span class="material-symbols-rounded">tune</span></span> Risk Profile
                 </a>
                 <a href="/insights" class="sb-link {% if request.url.path == '/insights' %}active{% endif %}">
-                    <span class="icon"><i data-lucide="brain"></i></span> AI Insights
-                </a>
-                <a href="/recurring" class="sb-link {% if request.url.path.startswith('/recurring') and not request.url.path.startswith('/budgets/recurring') %}active{% endif %}">
-                    <span class="icon"><i data-lucide="refresh-cw"></i></span> Recurring
+                    <span class="icon"><span class="material-symbols-outlined text-lg">query_stats</span></span> Insights
                 </a>
                 <a href="/reports" class="sb-link {% if request.url.path == '/reports' or request.url.path.startswith('/reports/') %}active{% endif %}">
-                    <span class="icon"><i data-lucide="file-bar-chart-2"></i></span> Reports
+                    <span class="icon"><span class="material-symbols-rounded">assignment</span></span> Reports
                 </a>
                 <a href="/analytics" class="sb-link {% if request.url.path == '/analytics' %}active{% endif %}">
-                    <span class="icon"><i data-lucide="bar-chart-3"></i></span> Analytics
-                </a>
-                <a href="/household" class="sb-link {% if request.url.path == '/household' %}active{% endif %}">
-                    <span class="icon"><i data-lucide="users"></i></span> Household
+                    <span class="icon"><span class="material-symbols-outlined text-lg">bar_chart</span></span> Analytics
                 </a>
 
                 <div class="sb-section">Account</div>
                 <a href="/notifications" class="sb-link {% if request.url.path == '/notifications' %}active{% endif %}">
-                    <span class="icon"><i data-lucide="bell"></i></span> Notifications
+                    <span class="icon"><span class="material-symbols-rounded">notifications</span></span> Notifications
                     <span id="sidebar-notif-badge" class="sb-badge" style="display:none;">0</span>
                 </a>
                 <a href="/settings/integrations" class="sb-link {% if request.url.path == '/settings/integrations' %}active{% endif %}">
-                    <span class="icon"><i data-lucide="link"></i></span> Integrations
+                    <span class="icon"><span class="material-symbols-rounded">link</span></span> Integrations
+                </a>
+                <a href="/household" class="sb-link {% if request.url.path == '/household' %}active{% endif %}">
+                    <span class="icon"><span class="material-symbols-rounded">groups</span></span> Household
                 </a>
                 <a href="/profile" class="sb-link {% if request.url.path == '/profile' %}active{% endif %}">
-                    <span class="icon"><i data-lucide="user"></i></span> Profile
+                    <span class="icon"><span class="material-symbols-rounded">person</span></span> Profile
                 </a>
                 <a href="/settings" class="sb-link {% if request.url.path == '/settings' or (request.url.path.startswith('/settings/') and request.url.path != '/settings/integrations') %}active{% endif %}">
-                    <span class="icon"><i data-lucide="settings"></i></span> Settings
+                    <span class="icon"><span class="material-symbols-rounded">settings</span></span> Settings
                 </a>
                 <a href="/sessions" class="sb-link {% if request.url.path == '/sessions' %}active{% endif %}">
-                    <span class="icon"><i data-lucide="shield-check"></i></span> Sessions
+                    <span class="icon"><span class="material-symbols-rounded">verified_user</span></span> Sessions
                 </a>
                 <a href="/security" class="sb-link {% if request.url.path == '/security' %}active{% endif %}">
-                    <span class="icon"><i data-lucide="shield"></i></span> Security
+                    <span class="icon"><span class="material-symbols-rounded">shield</span></span> Security
                 </a>
             </nav>
 
@@ -134,14 +134,14 @@
                 </div>
                 <div class="topbar-search" role="search">
                     <label for="shell-global-search" class="sr-only">Search</label>
-                    <i data-lucide="search" class="topbar-search-icon" aria-hidden="true"></i>
+                    <span class="material-symbols-outlined topbar-search-icon" aria-hidden="true">search</span>
                     <input type="search" id="shell-global-search" name="q" autocomplete="off" placeholder="Search transactions, budgets…" aria-label="Search app" />
                 </div>
                 <div class="topbar-trail">
                     <span id="shell-sync-status" class="topbar-pill text-xs md:text-sm max-w-[min(200px,32vw)] truncate" title="Connection status" aria-live="polite"></span>
                     <span class="topbar-pill hidden xl:inline !ml-0">Private &amp; secure • cached on your device</span>
                     <button type="button" class="topbar-bell" id="topbar-bell-btn" aria-label="Notifications">
-                        <i data-lucide="bell"></i>
+                        <span class="material-symbols-rounded">notifications</span>
                         <span id="topbar-notif-badge" class="topbar-badge" style="display:none;"></span>
                     </button>
                     <button type="button" class="btn btn-primary btn-sm topbar-add-btn" id="topbar-add-expense-btn" title="Add expense, budget, goal, or link bank">+ Add</button>
@@ -302,13 +302,13 @@
         <ul class="bottom-nav-items">
             <li class="bottom-nav-item">
                 <a href="/dashboard" class="bottom-nav-link {% if request.url.path == '/dashboard' %}active{% endif %}">
-                    <span class="bottom-nav-icon"><i data-lucide="home"></i></span>
+                    <span class="bottom-nav-icon"><span class="material-symbols-rounded">home</span></span>
                     <span>Home</span>
                 </a>
             </li>
             <li class="bottom-nav-item">
                 <a href="/transactions" class="bottom-nav-link {% if request.url.path == '/transactions' or request.url.path.startswith('/expenses') %}active{% endif %}">
-                    <span class="bottom-nav-icon"><i data-lucide="receipt"></i></span>
+                    <span class="bottom-nav-icon"><span class="material-symbols-outlined">receipt_long</span></span>
                     <span>Ledger</span>
                 </a>
             </li>
@@ -317,13 +317,13 @@
             </li>
             <li class="bottom-nav-item">
                 <a href="/budgets" class="bottom-nav-link {% if request.url.path.startswith('/budgets') %}active{% endif %}">
-                    <span class="bottom-nav-icon"><i data-lucide="wallet"></i></span>
+                    <span class="bottom-nav-icon"><span class="material-symbols-rounded">target</span></span>
                     <span>Budgets</span>
                 </a>
             </li>
             <li class="bottom-nav-item">
                 <a href="#" class="bottom-nav-link" id="bottom-nav-menu-toggle">
-                    <span class="bottom-nav-icon"><i data-lucide="menu"></i></span>
+                    <span class="bottom-nav-icon"><span class="material-symbols-rounded">menu</span></span>
                     <span>More</span>
                 </a>
             </li>
@@ -350,28 +350,28 @@
         <div class="action-sheet-title">Add New</div>
         <div class="action-sheet-items">
             <a href="/expenses/add" class="action-sheet-item">
-                <span class="action-sheet-icon action-sheet-icon--danger"><i data-lucide="credit-card"></i></span>
+                <span class="action-sheet-icon action-sheet-icon--danger"><span class="material-symbols-rounded">credit_card</span></span>
                 <div class="action-sheet-item-text">
                     <span class="action-sheet-item-label">Add Expense</span>
                     <span class="action-sheet-item-desc">Record a new expense</span>
                 </div>
             </a>
             <a href="/budgets/add" class="action-sheet-item">
-                <span class="action-sheet-icon action-sheet-icon--accent"><i data-lucide="wallet"></i></span>
+                <span class="action-sheet-icon action-sheet-icon--accent"><span class="material-symbols-rounded">target</span></span>
                 <div class="action-sheet-item-text">
                     <span class="action-sheet-item-label">Add Budget</span>
                     <span class="action-sheet-item-desc">Set a spending limit</span>
                 </div>
             </a>
             <a href="/goals/add" class="action-sheet-item">
-                <span class="action-sheet-icon action-sheet-icon--success"><i data-lucide="piggy-bank"></i></span>
+                <span class="action-sheet-icon action-sheet-icon--success"><span class="material-symbols-rounded">kid_star</span></span>
                 <div class="action-sheet-item-text">
                     <span class="action-sheet-item-label">Add Goal</span>
                     <span class="action-sheet-item-desc">Start saving for something</span>
                 </div>
             </a>
             <a href="/link-bank" class="action-sheet-item">
-                <span class="action-sheet-icon action-sheet-icon--warning"><i data-lucide="landmark"></i></span>
+                <span class="action-sheet-icon action-sheet-icon--warning"><span class="material-symbols-rounded">account_balance</span></span>
                 <div class="action-sheet-item-text">
                     <span class="action-sheet-item-label">Link Bank Account</span>
                     <span class="action-sheet-item-desc">Connect via Plaid or Teller</span>
@@ -388,14 +388,14 @@
         <div class="action-sheet-title">More</div>
         <div class="action-sheet-items">
             <a href="/profile" class="action-sheet-item">
-                <span class="action-sheet-icon action-sheet-icon--accent"><i data-lucide="user"></i></span>
+                <span class="action-sheet-icon action-sheet-icon--accent"><span class="material-symbols-rounded">person</span></span>
                 <div class="action-sheet-item-text">
                     <span class="action-sheet-item-label">Profile</span>
                     <span class="action-sheet-item-desc">Edit info &amp; change password</span>
                 </div>
             </a>
             <a href="/settings" class="action-sheet-item">
-                <span class="action-sheet-icon action-sheet-icon--neutral"><i data-lucide="settings"></i></span>
+                <span class="action-sheet-icon action-sheet-icon--neutral"><span class="material-symbols-rounded">settings</span></span>
                 <div class="action-sheet-item-text">
                     <span class="action-sheet-item-label">Settings</span>
                     <span class="action-sheet-item-desc">Currency, notifications, theme</span>
@@ -403,35 +403,35 @@
             </a>
             <div class="action-sheet-section-label">Analytics</div>
             <a href="/net-worth" class="action-sheet-item">
-                <span class="action-sheet-icon action-sheet-icon--warning"><i data-lucide="gem"></i></span>
+                <span class="action-sheet-icon action-sheet-icon--warning"><span class="material-symbols-rounded">payments</span></span>
                 <div class="action-sheet-item-text">
                     <span class="action-sheet-item-label">Net Worth</span>
                     <span class="action-sheet-item-desc">Assets &amp; liabilities</span>
                 </div>
             </a>
             <a href="/investments" class="action-sheet-item">
-                <span class="action-sheet-icon action-sheet-icon--success"><i data-lucide="trending-up"></i></span>
+                <span class="action-sheet-icon action-sheet-icon--success"><span class="material-symbols-rounded">trending_up</span></span>
                 <div class="action-sheet-item-text">
                     <span class="action-sheet-item-label">Investments</span>
                     <span class="action-sheet-item-desc">Portfolio &amp; performance</span>
                 </div>
             </a>
             <a href="/recommendations" class="action-sheet-item">
-                <span class="action-sheet-icon action-sheet-icon--accent"><i data-lucide="candlestick-chart"></i></span>
+                <span class="action-sheet-icon action-sheet-icon--accent"><span class="material-symbols-rounded">candlestick_chart</span></span>
                 <div class="action-sheet-item-text">
                     <span class="action-sheet-item-label">Portfolio ideas</span>
                     <span class="action-sheet-item-desc">Research and allocation notes</span>
                 </div>
             </a>
             <a href="/insights" class="action-sheet-item">
-                <span class="action-sheet-icon action-sheet-icon--info"><i data-lucide="brain"></i></span>
+                <span class="action-sheet-icon action-sheet-icon--info"><span class="material-symbols-rounded">query_stats</span></span>
                 <div class="action-sheet-item-text">
                     <span class="action-sheet-item-label">Spending analysis</span>
                     <span class="action-sheet-item-desc">Patterns, anomalies, and trends</span>
                 </div>
             </a>
             <a href="/reports" class="action-sheet-item">
-                <span class="action-sheet-icon action-sheet-icon--accent"><i data-lucide="file-bar-chart-2"></i></span>
+                <span class="action-sheet-icon action-sheet-icon--accent"><span class="material-symbols-rounded">dashboard</span></span>
                 <div class="action-sheet-item-text">
                     <span class="action-sheet-item-label">Reports</span>
                     <span class="action-sheet-item-desc">Full analytics &amp; export</span>
@@ -439,28 +439,28 @@
             </a>
             <div class="action-sheet-section-label">Account</div>
             <a href="/household" class="action-sheet-item">
-                <span class="action-sheet-icon action-sheet-icon--success"><i data-lucide="users"></i></span>
+                <span class="action-sheet-icon action-sheet-icon--success"><span class="material-symbols-rounded">home</span></span>
                 <div class="action-sheet-item-text">
                     <span class="action-sheet-item-label">Household</span>
                     <span class="action-sheet-item-desc">Members &amp; shared scope</span>
                 </div>
             </a>
             <a href="/sessions" class="action-sheet-item">
-                <span class="action-sheet-icon action-sheet-icon--danger"><i data-lucide="lock"></i></span>
+                <span class="action-sheet-icon action-sheet-icon--danger"><span class="material-symbols-rounded">lock</span></span>
                 <div class="action-sheet-item-text">
                     <span class="action-sheet-item-label">Sessions</span>
                     <span class="action-sheet-item-desc">Active devices &amp; logins</span>
                 </div>
             </a>
             <a href="/settings/integrations#alpaca-integration-card" class="action-sheet-item">
-                <span class="action-sheet-icon action-sheet-icon--warning"><i data-lucide="link"></i></span>
+                <span class="action-sheet-icon action-sheet-icon--warning"><span class="material-symbols-rounded">link</span></span>
                 <div class="action-sheet-item-text">
                     <span class="action-sheet-item-label">Link Alpaca</span>
                     <span class="action-sheet-item-desc">Connect brokerage sync</span>
                 </div>
             </a>
             <a href="/notifications" class="action-sheet-item">
-                <span class="action-sheet-icon action-sheet-icon--accent"><i data-lucide="bell"></i></span>
+                <span class="action-sheet-icon action-sheet-icon--accent"><span class="material-symbols-rounded">notifications</span></span>
                 <div class="action-sheet-item-text">
                     <span class="action-sheet-item-label">Notifications</span>
                     <span class="action-sheet-item-desc">Alerts &amp; messages</span>
@@ -692,49 +692,6 @@
             var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
             var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
             dateEl.textContent = days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
-        }
-    })();
-    </script>
-    <script nonce="{{ csp_nonce | default('') }}" src="/static/js/lucide.min.js?v={{ _static_v }}"></script>
-    <script nonce="{{ csp_nonce | default('') }}">
-    // Render lucide icons; auto-render icons inserted later by page scripts.
-    (function () {
-        function renderIcons() {
-            if (window.lucide && typeof window.lucide.createIcons === 'function') {
-                window.lucide.createIcons();
-            }
-        }
-        window.renderIcons = renderIcons;
-        var scheduled = false;
-        function schedule() {
-            if (scheduled) return;
-            scheduled = true;
-            window.requestAnimationFrame(function () { scheduled = false; renderIcons(); });
-        }
-        function start() {
-            renderIcons();
-            try {
-                var obs = new MutationObserver(function (muts) {
-                    for (var i = 0; i < muts.length; i++) {
-                        var added = muts[i].addedNodes;
-                        for (var j = 0; j < added.length; j++) {
-                            var n = added[j];
-                            if (n.nodeType === 1 &&
-                                ((n.matches && n.matches('[data-lucide]')) ||
-                                 (n.querySelector && n.querySelector('[data-lucide]')))) {
-                                schedule();
-                                return;
-                            }
-                        }
-                    }
-                });
-                obs.observe(document.body, { childList: true, subtree: true });
-            } catch (e) {}
-        }
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', start);
-        } else {
-            start();
         }
     })();
     </script>

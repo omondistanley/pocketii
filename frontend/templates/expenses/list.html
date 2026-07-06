@@ -6,7 +6,7 @@
     <div>
         <h1 class="page-title">Expenses</h1>
     </div>
-    <a href="/expenses/add" class="btn btn-primary icon-btn-label"><i data-lucide="plus"></i> Add</a>
+    <a href="/expenses/add" class="btn btn-primary icon-btn-label"><span class="material-symbols-rounded">add</span> Add</a>
 </div>
 
 <div id="expenses-added-msg" class="auth-alert auth-alert--success" style="display:none;margin-bottom:16px;"></div>
@@ -44,8 +44,8 @@
         <datalist id="filter-tag-suggestions"></datalist>
     </div>
     <div class="filter-bar-actions">
-        <button type="button" id="filter-apply-btn" class="btn btn-primary btn-sm icon-btn-label"><i data-lucide="filter"></i> Apply</button>
-        <button type="button" id="filter-clear-btn" class="btn btn-ghost btn-sm icon-btn-label"><i data-lucide="x"></i> Clear</button>
+        <button type="button" id="filter-apply-btn" class="btn btn-primary btn-sm icon-btn-label"><span class="material-symbols-rounded">filter_alt</span> Apply</button>
+        <button type="button" id="filter-clear-btn" class="btn btn-ghost btn-sm icon-btn-label"><span class="material-symbols-rounded">close</span> Clear</button>
     </div>
 </div>
 
@@ -75,9 +75,9 @@
 
 <!-- Pagination -->
 <div id="expenses-pagination" class="pagination-bar" style="display:none;">
-    <button type="button" id="pagination-prev" class="btn btn-ghost btn-sm icon-btn-label"><i data-lucide="arrow-left"></i> Prev</button>
+    <button type="button" id="pagination-prev" class="btn btn-ghost btn-sm icon-btn-label"><span class="material-symbols-rounded">arrow_back</span> Prev</button>
     <span id="pagination-info" class="pagination-info"></span>
-    <button type="button" id="pagination-next" class="btn btn-ghost btn-sm icon-btn-label">Next <i data-lucide="arrow-right"></i></button>
+    <button type="button" id="pagination-next" class="btn btn-ghost btn-sm icon-btn-label">Next <span class="material-symbols-rounded">arrow_forward</span></button>
 </div>
 
 <!-- Hidden summary elements used by layout.js panel -->
@@ -183,7 +183,7 @@
         var tag = (val('filter-tag') || '').trim();
         if (tag) {
             activeTagChips.innerHTML = '<span class="tag-badge">Tag: ' + tag +
-                ' <button type="button" id="clear-tag-filter" style="background:none;border:none;cursor:pointer;color:inherit;margin-left:4px;font-size:0.85em;"><i data-lucide="x"></i></button></span>';
+                ' <button type="button" id="clear-tag-filter" style="background:none;border:none;cursor:pointer;color:inherit;margin-left:4px;font-size:0.85em;"><span class="material-symbols-rounded">close</span></button></span>';
             var clearBtn = document.getElementById('clear-tag-filter');
             if (clearBtn) clearBtn.addEventListener('click', function() {
                 set('filter-tag', ''); filterOpts.page = 1; renderList(); updateUrl();
@@ -368,11 +368,11 @@
 
     if (!isMobile || !mListEl) return;
 
-    var CAT_EMOJI = {'food':'<i data-lucide="utensils"></i>','grocery':'<i data-lucide="utensils"></i>','restaurant':'<i data-lucide="utensils"></i>','transport':'<i data-lucide="car"></i>','car':'<i data-lucide="car"></i>','travel':'<i data-lucide="plane"></i>','entertainment':'<i data-lucide="drama"></i>','health':'<i data-lucide="stethoscope"></i>','medical':'<i data-lucide="stethoscope"></i>','shopping':'<i data-lucide="shopping-bag"></i>','housing':'<i data-lucide="home"></i>','rent':'<i data-lucide="home"></i>','utilities':'<i data-lucide="lightbulb"></i>','salary':'<i data-lucide="briefcase"></i>','income':'<i data-lucide="briefcase"></i>'};
+    var CAT_EMOJI = {'food':'<span class="material-symbols-rounded">restaurant</span>','grocery':'<span class="material-symbols-rounded">restaurant</span>','restaurant':'<span class="material-symbols-rounded">restaurant</span>','transport':'<span class="material-symbols-rounded">directions_car</span>','car':'<span class="material-symbols-rounded">directions_car</span>','travel':'<span class="material-symbols-rounded">flight</span>','entertainment':'<span class="material-symbols-rounded">theater_comedy</span>','health':'<span class="material-symbols-rounded">medical_services</span>','medical':'<span class="material-symbols-rounded">medical_services</span>','shopping':'<span class="material-symbols-rounded">shopping_bag</span>','housing':'<span class="material-symbols-rounded">home</span>','rent':'<span class="material-symbols-rounded">home</span>','utilities':'<span class="material-symbols-rounded">lightbulb</span>','salary':'<span class="material-symbols-rounded">work</span>','income':'<span class="material-symbols-rounded">work</span>'};
     function getCatEmoji(name) {
         var n = (name || '').toLowerCase();
         for (var k in CAT_EMOJI) { if (n.indexOf(k) !== -1) return CAT_EMOJI[k]; }
-        return '<i data-lucide="clipboard-list"></i>';
+        return '<span class="material-symbols-rounded">assignment</span>';
     }
     function esc(v) { return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
     function fmtDateShort(val) {
@@ -401,7 +401,7 @@
             .then(function(d) {
                 var list = (d && d.items) || [];
                 if (!list.length) {
-                    mListEl.innerHTML = '<li><div class="empty-state-inline"><i data-lucide="receipt" class="empty-icon"></i><span class="empty-title">No expenses found</span><span class="empty-body">Try adjusting filters, or add your first expense.</span><a href="/expenses/add" class="btn btn-primary" style="margin-top:0.5rem;">+ Add expense</a></div></li>';
+                    mListEl.innerHTML = '<li><div class="empty-state-inline"><span class="material-symbols-rounded empty-icon">receipt_long</span><span class="empty-title">No expenses found</span><span class="empty-body">Try adjusting filters, or add your first expense.</span><a href="/expenses/add" class="btn btn-primary" style="margin-top:0.5rem;">+ Add expense</a></div></li>';
                     return;
                 }
                 mListEl.innerHTML = list.map(function(item) {

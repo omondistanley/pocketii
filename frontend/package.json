@@ -1,5 +1,5 @@
 {
   "name": "pocketii-frontend",
   "private": true,
-  "description": "Server-rendered Jinja fallback frontend. No build step: plain CSS (static/css/main.css) + vendored JS (static/js/*), icons via vendored lucide (static/js/lucide.min.js)."
+  "description": "Server-rendered Jinja frontend following the pocketii Design System (dark theme, Manrope, Material Symbols). No build step at runtime: committed static/css/main.css + app.tw.css and static/js/* are the source."
 }

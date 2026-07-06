@@ -6,7 +6,7 @@
 <div class="page-header">
     <div style="display:flex;align-items:center;gap:12px;">
         <a href="/dashboard" class="btn btn-ghost btn-sm" aria-label="Back to dashboard">
-            <i data-lucide="arrow-left"></i>
+            <span class="material-symbols-rounded">arrow_back</span>
         </a>
         <h1 class="page-title">Bank Connection</h1>
     </div>
@@ -14,7 +14,7 @@
 
 <div class="card" style="text-align:center;padding:2rem 1.5rem;margin-bottom:1.5rem;">
     <div style="width:80px;height:80px;border-radius:50%;background:var(--emerald-light,#ecfdf5);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;">
-        <i data-lucide="circle-check" style="font-size:40px;color:var(--color-emerald,#10b981);"></i>
+        <span class="material-symbols-rounded" style="font-size:40px;color:var(--color-emerald,#10b981);">check_circle</span>
     </div>
     <h2 style="font-size:1.5rem;font-weight:800;margin:0 0 0.5rem;">Success!</h2>
     <p class="muted" style="font-size:0.9375rem;max-width:360px;margin:0 auto;">
@@ -34,7 +34,7 @@
 
 <div class="card mb-24">
     <div class="card-header">
-        <span class="card-title"><i data-lucide="landmark" style="font-size:16px;vertical-align:middle;margin-right:4px;"></i> Connected accounts</span>
+        <span class="card-title"><span class="material-symbols-rounded" style="font-size:16px;vertical-align:middle;margin-right:4px;">account_balance</span> Connected accounts</span>
     </div>
     <p class="muted" style="font-size:0.8125rem;margin-top:8px;margin-bottom:12px;">
         Each linked bank account appears below. Use <strong>Plaid sync</strong> on Expenses to import transactions.
@@ -92,7 +92,7 @@
       var badge = provider === 'teller' ? 'Teller' : 'Plaid';
       return '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid var(--border);border-radius:10px;background:var(--surface-container-low,#f8fafc);">' +
         '<div style="display:flex;align-items:center;gap:10px;">' +
-        '<i data-lucide="landmark" style="color:var(--brand,#135bec);font-size:22px;"></i>' +
+        '<span class="material-symbols-rounded" style="color:var(--brand,#135bec);font-size:22px;">account_balance</span>' +
         '<div><div style="font-size:0.875rem;font-weight:700;color:var(--text-primary);">' + esc(name) + '</div>' +
         '<div class="muted" style="font-size:0.75rem;">Linked via ' + esc(badge) + '</div></div></div>' +
         '<span style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--brand,#135bec);">' + esc(badge) + '</span></div>';

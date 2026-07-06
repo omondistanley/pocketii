@@ -6,8 +6,8 @@
 <div class="page-header" style="flex-wrap:wrap;gap:0.5rem;">
     <h1 class="page-title">Recommendations</h1>
     <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
-        <button type="button" id="rec-onboarding-open" class="btn btn-ghost btn-sm icon-btn-label" title="How this page works"><i data-lucide="circle-help"></i> Tour</button>
-        <button type="button" id="rec-prefs-focus" class="btn btn-ghost btn-sm icon-btn-label" title="Jump to preferences"><i data-lucide="settings"></i> Preferences</button>
+        <button type="button" id="rec-onboarding-open" class="btn btn-ghost btn-sm icon-btn-label" title="How this page works"><span class="material-symbols-rounded">help</span> Tour</button>
+        <button type="button" id="rec-prefs-focus" class="btn btn-ghost btn-sm icon-btn-label" title="Jump to preferences"><span class="material-symbols-rounded">settings</span> Preferences</button>
         <a href="#rec-run-analysis-card" class="btn btn-primary">Run Analysis</a>
     </div>
 </div>
@@ -17,7 +17,7 @@
 <!-- Surplus waterfall (spec 6-1): after income, bills, goals, reserve — what may be genuinely yours to consider for investing -->
 <div id="rec-surplus-waterfall-card" class="card" style="margin-bottom:1.25rem;display:none;">
     <div class="page-header" style="margin-bottom:0.75rem;">
-        <h2 class="page-title" style="font-size:1.1rem;"><i data-lucide="bar-chart-3"></i> Your monthly surplus</h2>
+        <h2 class="page-title" style="font-size:1.1rem;"><span class="material-symbols-rounded">waterfall_chart</span> Your monthly surplus</h2>
     </div>
     <p class="muted" style="font-size:0.8125rem;margin-bottom:1rem;">
         This walks from income through committed costs to what might remain. Numbers are estimates from your linked data.
@@ -30,12 +30,12 @@
 
 <!-- Finance Context Strip -->
 <div id="rec-finance-strip" style="display:none;background:var(--surface,#f0f7ff);border-left:3px solid #135bec;border-radius:4px;padding:0.6rem 1rem;margin-bottom:1rem;font-size:0.875rem;">
-    <i data-lucide="wallet" style="font-size:1rem;vertical-align:middle;margin-right:0.35rem;"></i>
+    <span class="material-symbols-rounded" style="font-size:1rem;vertical-align:middle;margin-right:0.35rem;">account_balance_wallet</span>
     <span id="rec-finance-text"></span>
     <a href="/investments" style="margin-left:0.5rem;font-size:0.8125rem;">View portfolio →</a>
 </div>
 <div id="rec-north-star-strip" style="display:none;background:var(--surface,#f0f7ff);border-left:3px solid #0ea5e9;border-radius:4px;padding:0.6rem 1rem;margin-bottom:1rem;font-size:0.875rem;">
-    <i data-lucide="arrow-up" style="font-size:1rem;vertical-align:middle;margin-right:0.35rem;"></i>
+    <span class="material-symbols-rounded" style="font-size:1rem;vertical-align:middle;margin-right:0.35rem;">north</span>
     <span id="rec-north-star-text"></span>
     <a id="rec-north-star-link" href="#recommendations-results" style="margin-left:0.5rem;font-size:0.8125rem;display:none;">Jump to ranked list →</a>
 </div>
@@ -49,7 +49,7 @@
 <!-- Weekly Digest (digest-first order vs Run card) -->
 <div class="card" id="rec-digest-card" style="margin-bottom:1.25rem;display:none;">
     <div class="page-header" style="margin-bottom:0.5rem;">
-        <h2 class="page-title" style="font-size:1.1rem;"><i data-lucide="mail"></i> Weekly Digest</h2>
+        <h2 class="page-title" style="font-size:1.1rem;"><span class="material-symbols-rounded">mail</span> Weekly Digest</h2>
         <span id="rec-digest-week" class="muted" style="font-size:0.8125rem;"></span>
     </div>
     <p id="rec-digest-headline" style="font-weight:600;margin-bottom:0.25rem;"></p>
@@ -81,7 +81,7 @@
     <!-- Preferences: collapsible "drawer" (native details) -->
     <details id="rec-preferences-details" class="rec-prefs-details" style="margin-bottom:1rem;border:1px solid var(--border);border-radius:0.5rem;padding:0.5rem 0.75rem;background:var(--surface-alt,#f8fafc);">
         <summary style="cursor:pointer;font-weight:600;list-style-position:outside;padding:0.25rem 0;">
-            <i data-lucide="sliders-horizontal" style="font-size:1.1rem;vertical-align:middle;"></i>
+            <span class="material-symbols-rounded" style="font-size:1.1rem;vertical-align:middle;">tune</span>
             More preferences <span class="muted" style="font-weight:400;font-size:0.8125rem;">(expand to edit)</span>
         </summary>
         <div id="rec-preferences-section" style="margin-top:0.75rem;">
@@ -159,7 +159,7 @@
 <!-- Page state banners -->
 <div id="rec-steady-banner" class="card" style="display:none;margin-top:1.25rem;background:var(--green-light,#f0fff4);border-left:3px solid var(--color-emerald,#38a169);">
     <div style="display:flex;align-items:flex-start;gap:0.75rem;">
-        <i data-lucide="circle-check" style="color:var(--color-emerald,#38a169);font-size:1.5rem;"></i>
+        <span class="material-symbols-rounded" style="color:var(--color-emerald,#38a169);font-size:1.5rem;">check_circle</span>
         <div>
             <strong>Portfolio is on track</strong>
             <p class="muted" style="font-size:0.875rem;margin-top:0.25rem;">Your allocation is within your stated targets. No specific action needed this week.</p>
@@ -168,7 +168,7 @@
 </div>
 <div id="rec-volatile-banner" class="card" style="display:none;margin-top:1.25rem;background:var(--amber-light,#fffbeb);border-left:3px solid var(--color-amber,#ecc94b);">
     <div style="display:flex;align-items:flex-start;gap:0.75rem;">
-        <i data-lucide="triangle-alert" style="color:var(--color-amber,#ecc94b);font-size:1.5rem;"></i>
+        <span class="material-symbols-rounded" style="color:var(--color-amber,#ecc94b);font-size:1.5rem;">warning</span>
         <div>
             <strong>Markets are showing elevated volatility</strong>
             <p class="muted" style="font-size:0.875rem;margin-top:0.25rem;">Recommendations are shown for informational purposes. Your long-term allocation plan has not changed.</p>
@@ -177,7 +177,7 @@
 </div>
 <div id="rec-first-run-banner" class="card" style="display:none;margin-top:1.25rem;background:var(--surface,#f0f7ff);border-left:3px solid var(--brand,#135bec);">
     <div style="display:flex;align-items:flex-start;gap:0.75rem;">
-        <i data-lucide="rocket" style="color:var(--brand,#135bec);font-size:1.5rem;"></i>
+        <span class="material-symbols-rounded" style="color:var(--brand,#135bec);font-size:1.5rem;">rocket_launch</span>
         <div>
             <strong>Getting started</strong>
             <p class="muted" style="font-size:0.875rem;margin-top:0.25rem;">Save your preferences and run analysis to see ranked suggestions. With no holdings yet, you'll get a starter list to explore - not a directive to buy. Not financial advice.</p>
@@ -198,7 +198,7 @@
 <!-- Monte Carlo Scenario Modeller -->
 <details class="card" style="margin-top:1.25rem;" id="rec-scenario-details">
     <summary style="cursor:pointer;list-style-position:outside;font-weight:600;display:flex;align-items:center;gap:0.4rem;">
-        <i data-lucide="line-chart"></i> Scenario Modeller
+        <span class="material-symbols-rounded">show_chart</span> Scenario Modeller
     </summary>
     <div style="margin-top:0.75rem;">
     <p class="muted" style="font-size:0.8125rem;margin-bottom:1rem;">
@@ -243,12 +243,12 @@
 <!-- Watchlist Card -->
 <details class="card" style="margin-top:1.25rem;" id="rec-watchlist-details">
     <summary style="cursor:pointer;list-style-position:outside;font-weight:600;display:flex;align-items:center;gap:0.4rem;">
-        <i data-lucide="eye"></i> Watchlist
+        <span class="material-symbols-rounded">visibility</span> Watchlist
     </summary>
     <div style="margin-top:0.75rem;">
     <div class="page-header" style="margin-bottom:0.75rem;">
-        <h2 class="page-title" style="font-size:1.1rem;"><i data-lucide="eye"></i> Watchlist</h2>
-        <button type="button" id="watchlist-add-btn" class="btn btn-sm btn-primary icon-btn-label"><i data-lucide="plus"></i> Add</button>
+        <h2 class="page-title" style="font-size:1.1rem;"><span class="material-symbols-rounded">visibility</span> Watchlist</h2>
+        <button type="button" id="watchlist-add-btn" class="btn btn-sm btn-primary icon-btn-label"><span class="material-symbols-rounded">add</span> Add</button>
     </div>
     <p class="muted" style="font-size:0.8125rem;margin-bottom:0.75rem;">
         Track symbols with optional price alerts. Alerts fire on daily closing price.

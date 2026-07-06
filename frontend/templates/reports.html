@@ -8,19 +8,19 @@
   <div class="page-header page-toolbar">
     <h1 class="page-title">Reports</h1>
     <div class="page-toolbar-controls">
-      <label for="reports-period" class="form-label" style="margin:0;white-space:nowrap;"><span class="icon-btn-label"><i data-lucide="calendar"></i> Period</span></label>
+      <label for="reports-period" class="form-label" style="margin:0;white-space:nowrap;"><span class="icon-btn-label"><span class="material-symbols-rounded">calendar_month</span> Period</span></label>
       <select id="reports-period" class="form-select w-auto">
         <option value="month">This Month</option>
         <option value="quarter">This Quarter</option>
         <option value="year">This Year</option>
       </select>
-      <label for="reports-currency" class="form-label" style="margin:0;white-space:nowrap;"><span class="icon-btn-label"><i data-lucide="banknote"></i> Currency</span></label>
+      <label for="reports-currency" class="form-label" style="margin:0;white-space:nowrap;"><span class="icon-btn-label"><span class="material-symbols-rounded">payments</span> Currency</span></label>
       <select id="reports-currency" class="form-select w-auto">
         <option value="USD">USD</option>
         <option value="EUR">EUR</option>
         <option value="GBP">GBP</option>
       </select>
-      <button type="button" id="reports-save-view-btn" class="btn btn-primary btn-sm icon-btn-label"><i data-lucide="bookmark-plus"></i> Save current view</button>
+      <button type="button" id="reports-save-view-btn" class="btn btn-primary btn-sm icon-btn-label"><span class="material-symbols-rounded">bookmark_add</span> Save current view</button>
     </div>
   </div>
 
@@ -45,7 +45,7 @@
 
     <!-- Spending by Category -->
     <div class="card">
-      <h2 class="section-title-sm"><i data-lucide="pie-chart"></i> Spending by Category</h2>
+      <h2 class="section-title-sm"><span class="material-symbols-rounded">pie_chart</span> Spending by Category</h2>
       <div class="table-wrap">
         <table id="reports-category-table">
           <thead>
@@ -67,7 +67,7 @@
 
     <!-- Period Comparison -->
     <div class="card" id="reports-comparison">
-      <h2 class="section-title-sm"><i data-lucide="arrow-left-right"></i> Period Comparison</h2>
+      <h2 class="section-title-sm"><span class="material-symbols-rounded">compare_arrows</span> Period Comparison</h2>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;" id="reports-comparison-inner">
         <div>
           <div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--color-muted,#6b7280);margin-bottom:0.5rem;">Current</div>
@@ -87,7 +87,7 @@
   </div><!-- end grid -->
 
   <div class="card" style="margin-top:1rem;">
-    <h2 class="section-title-sm"><i data-lucide="line-chart"></i> Spending trend</h2>
+    <h2 class="section-title-sm"><span class="material-symbols-rounded">show_chart</span> Spending trend</h2>
     <p class="text-secondary" style="margin:0 0 .75rem;font-size:13px;">Visual trend for the selected period to quickly spot spend acceleration.</p>
     <div id="reports-trend-chart" style="min-height:220px;"></div>
   </div>

@@ -6,7 +6,7 @@
 <div class="page-header">
     <div style="display:flex;align-items:center;gap:12px;">
         <a href="/link-bank" class="btn btn-ghost btn-sm" aria-label="Back">
-            <i data-lucide="arrow-left"></i>
+            <span class="material-symbols-rounded">arrow_back</span>
         </a>
         <h1 class="page-title">Select Your Bank</h1>
     </div>
@@ -14,7 +14,7 @@
 
 <div class="card mb-24" style="position:relative;">
     <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface-container-low,#f8fafc);">
-        <i data-lucide="search" style="color:var(--text-muted);font-size:20px;"></i>
+        <span class="material-symbols-rounded" style="color:var(--text-muted);font-size:20px;">search</span>
         <input type="text" id="bank-search" class="form-input" style="border:none;background:transparent;padding:0;font-size:0.9375rem;flex:1;" placeholder="Search for your institution" />
     </div>
 </div>
@@ -25,27 +25,27 @@
     </div>
     <div class="grid-2" style="margin-top:12px;gap:12px;">
         <button type="button" class="plaid-open-link" data-name="Chase" style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px;border:1px solid var(--border);border-radius:12px;background:var(--surface-container-low,#f8fafc);cursor:pointer;transition:border-color 0.15s;">
-            <i data-lucide="landmark" style="font-size:32px;color:var(--brand,#135bec);"></i>
+            <span class="material-symbols-rounded" style="font-size:32px;color:var(--brand,#135bec);">account_balance</span>
             <span style="font-size:0.875rem;font-weight:700;color:var(--text-primary);">Chase</span>
         </button>
         <button type="button" class="plaid-open-link" data-name="Wells Fargo" style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px;border:1px solid var(--border);border-radius:12px;background:var(--surface-container-low,#f8fafc);cursor:pointer;transition:border-color 0.15s;">
-            <i data-lucide="landmark" style="font-size:32px;color:var(--brand,#135bec);"></i>
+            <span class="material-symbols-rounded" style="font-size:32px;color:var(--brand,#135bec);">account_balance</span>
             <span style="font-size:0.875rem;font-weight:700;color:var(--text-primary);">Wells Fargo</span>
         </button>
         <button type="button" class="plaid-open-link" data-name="Bank of America" style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px;border:1px solid var(--border);border-radius:12px;background:var(--surface-container-low,#f8fafc);cursor:pointer;transition:border-color 0.15s;">
-            <i data-lucide="landmark" style="font-size:32px;color:var(--brand,#135bec);"></i>
+            <span class="material-symbols-rounded" style="font-size:32px;color:var(--brand,#135bec);">account_balance</span>
             <span style="font-size:0.875rem;font-weight:700;color:var(--text-primary);">Bank of America</span>
         </button>
         <button type="button" class="plaid-open-link" data-name="Citi" style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px;border:1px solid var(--border);border-radius:12px;background:var(--surface-container-low,#f8fafc);cursor:pointer;transition:border-color 0.15s;">
-            <i data-lucide="landmark" style="font-size:32px;color:var(--brand,#135bec);"></i>
+            <span class="material-symbols-rounded" style="font-size:32px;color:var(--brand,#135bec);">account_balance</span>
             <span style="font-size:0.875rem;font-weight:700;color:var(--text-primary);">Citi</span>
         </button>
         <button type="button" class="plaid-open-link" data-name="Capital One" style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px;border:1px solid var(--border);border-radius:12px;background:var(--surface-container-low,#f8fafc);cursor:pointer;transition:border-color 0.15s;">
-            <i data-lucide="landmark" style="font-size:32px;color:var(--brand,#135bec);"></i>
+            <span class="material-symbols-rounded" style="font-size:32px;color:var(--brand,#135bec);">account_balance</span>
             <span style="font-size:0.875rem;font-weight:700;color:var(--text-primary);">Capital One</span>
         </button>
         <button type="button" class="plaid-open-link" data-name="US Bank" style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px;border:1px solid var(--border);border-radius:12px;background:var(--surface-container-low,#f8fafc);cursor:pointer;transition:border-color 0.15s;">
-            <i data-lucide="landmark" style="font-size:32px;color:var(--brand,#135bec);"></i>
+            <span class="material-symbols-rounded" style="font-size:32px;color:var(--brand,#135bec);">account_balance</span>
             <span style="font-size:0.875rem;font-weight:700;color:var(--text-primary);">US Bank</span>
         </button>
     </div>
@@ -58,40 +58,40 @@
     <div style="margin-top:8px;">
         <button type="button" class="plaid-open-link settings-item" data-name="American Express">
             <div style="display:flex;align-items:center;gap:12px;flex:1;">
-                <i data-lucide="credit-card" class="settings-item-icon"></i>
+                <span class="material-symbols-rounded settings-item-icon">credit_card</span>
                 <div>
                     <div style="font-size:0.875rem;font-weight:600;color:var(--text-primary);">American Express</div>
                     <div class="muted" style="font-size:0.75rem;">Credit Cards &amp; Personal Loans</div>
                 </div>
             </div>
-            <i data-lucide="chevron-right" class="settings-item-arrow"></i>
+            <span class="material-symbols-rounded settings-item-arrow">chevron_right</span>
         </button>
         <button type="button" class="plaid-open-link settings-item" data-name="Fidelity Investments">
             <div style="display:flex;align-items:center;gap:12px;flex:1;">
-                <i data-lucide="line-chart" class="settings-item-icon"></i>
+                <span class="material-symbols-rounded settings-item-icon">show_chart</span>
                 <div>
                     <div style="font-size:0.875rem;font-weight:600;color:var(--text-primary);">Fidelity Investments</div>
                     <div class="muted" style="font-size:0.75rem;">Retirement &amp; Brokerage</div>
                 </div>
             </div>
-            <i data-lucide="chevron-right" class="settings-item-arrow"></i>
+            <span class="material-symbols-rounded settings-item-arrow">chevron_right</span>
         </button>
         <button type="button" class="plaid-open-link settings-item" data-name="PNC Bank">
             <div style="display:flex;align-items:center;gap:12px;flex:1;">
-                <i data-lucide="landmark" class="settings-item-icon"></i>
+                <span class="material-symbols-rounded settings-item-icon">account_balance</span>
                 <div>
                     <div style="font-size:0.875rem;font-weight:600;color:var(--text-primary);">PNC Bank</div>
                     <div class="muted" style="font-size:0.75rem;">Personal &amp; Business Banking</div>
                 </div>
             </div>
-            <i data-lucide="chevron-right" class="settings-item-arrow"></i>
+            <span class="material-symbols-rounded settings-item-arrow">chevron_right</span>
         </button>
     </div>
 </div>
 
 <div style="text-align:center;padding:1rem 0 2rem;border-top:1px solid var(--border-subtle);">
     <div class="muted" style="font-size:0.75rem;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:6px;">
-        <i data-lucide="lock" style="font-size:14px;"></i>
+        <span class="material-symbols-rounded" style="font-size:14px;">lock</span>
         Secure connection via Plaid
     </div>
     <p class="muted" style="font-size:0.75rem;">

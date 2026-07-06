@@ -110,7 +110,7 @@
   if (window.Goals && window.Goals.renderList) {
     window.Goals.renderList('goals-list', { onTotals: updateTotals });
   } else {
-    document.getElementById('goals-list').innerHTML = '<div class="empty-state-inline"><i data-lucide="piggy-bank" class="empty-icon"></i><span class="empty-title">No goals yet</span><span class="empty-body">Set a savings goal to start tracking your progress.</span><a href="/goals/add" class="btn btn-primary" style="margin-top:0.5rem;">+ Create goal</a></div>';
+    document.getElementById('goals-list').innerHTML = '<div class="empty-state-inline"><span class="material-symbols-rounded empty-icon">kid_star</span><span class="empty-title">No goals yet</span><span class="empty-body">Set a savings goal to start tracking your progress.</span><a href="/goals/add" class="btn btn-primary" style="margin-top:0.5rem;">+ Create goal</a></div>';
     updateTotals({ totalSaved: 0, totalTarget: 0, count: 0 });
   }
   var addBtn = document.querySelector('a[aria-label="Add goal"]');

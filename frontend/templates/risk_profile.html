@@ -209,18 +209,18 @@
         <div style="flex:1;"></div>
         <button type="button" id="rp-next-btn" class="btn btn-primary">Next →</button>
         <button type="button" id="rp-save-btn" class="btn btn-primary" style="display:none;">
-            <i data-lucide="save" style="font-size:1rem;vertical-align:middle;"></i> Save profile
+            <span class="material-symbols-rounded" style="font-size:1rem;vertical-align:middle;">save</span> Save profile
         </button>
     </div>
 </div>
 
 <!-- Right card: current profile -->
 <div class="card" style="grid-column:1/span 2;margin-top:0.5rem;">
-    <h3 class="stat-label" style="margin-bottom:1rem;"><span class="icon-btn-label"><i data-lucide="history"></i> Current saved profile</span></h3>
+    <h3 class="stat-label" style="margin-bottom:1rem;"><span class="icon-btn-label"><span class="material-symbols-rounded">history</span> Current saved profile</span></h3>
     <div id="rp-current" class="muted" style="font-size:0.875rem;">Loading…</div>
     <div style="margin-top:1rem;">
         <a href="/recommendations" class="btn btn-ghost icon-btn-label" style="font-size:0.875rem;">
-            <i data-lucide="sparkles"></i> View recommendations
+            <span class="material-symbols-rounded">auto_awesome</span> View recommendations
         </a>
     </div>
 </div>
@@ -387,15 +387,15 @@
                 window.showToast && window.showToast('Risk profile saved.', 'success');
                 renderCurrentProfile(p);
                 btn.disabled = false;
-                btn.innerHTML = '<i data-lucide="check" style="font-size:1rem;vertical-align:middle;"></i> Saved!';
+                btn.innerHTML = '<span class="material-symbols-rounded" style="font-size:1rem;vertical-align:middle;">check</span> Saved!';
                 setTimeout(function () {
-                    btn.innerHTML = '<i data-lucide="save" style="font-size:1rem;vertical-align:middle;"></i> Save profile';
+                    btn.innerHTML = '<span class="material-symbols-rounded" style="font-size:1rem;vertical-align:middle;">save</span> Save profile';
                 }, 2000);
             })
             .catch(function (e) {
                 window.showToast && window.showToast(e.message || 'Save failed.', 'error');
                 btn.disabled = false;
-                btn.innerHTML = '<i data-lucide="save" style="font-size:1rem;vertical-align:middle;"></i> Save profile';
+                btn.innerHTML = '<span class="material-symbols-rounded" style="font-size:1rem;vertical-align:middle;">save</span> Save profile';
             });
     });
 
