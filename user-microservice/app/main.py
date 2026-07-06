@@ -66,7 +66,10 @@ app.add_middleware(
 async def static_assets_cache_control(request: Request, call_next):
     """Avoid stale UI: /static/* should not be stored long-term when STATIC_ASSETS_NO_CACHE is on."""
     response = await call_next(request)
-    if STATIC_ASSETS_NO_CACHE and request.url.path.startswith("/static/"):
+    if STATIC_ASSETS_NO_CACHE and (
+        request.url.path.startswith("/static/")
+        or request.url.path.startswith("/assets/")
+    ):
         response.headers["Cache-Control"] = "no-store, max-age=0, must-revalidate"
         response.headers["Pragma"] = "no-cache"
     return response
@@ -88,17 +91,16 @@ async def redirect_to_gateway_if_configured(request: Request, call_next):
     return await call_next(request)
 
 
-# Frontend: expense_tracker/frontend (sibling of user-microservice)
-# __file__ = .../user-microservice/app/main.py -> parent.parent = user-microservice -> parent.parent.parent = expense_tracker
-_FRONTEND_DIR = Path(__file__).resolve().parent.parent.parent / "frontend"
-_TEMPLATES_DIR = _FRONTEND_DIR / "templates"
-_STATIC_DIR = _FRONTEND_DIR / "static"
+# Frontend: single server-rendered Jinja UI in expense_tracker/frontend (pocketii Design System).
+_REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+_LEGACY_FRONTEND_DIR = _REPO_ROOT / "frontend"
+_LEGACY_TEMPLATES_DIR = _LEGACY_FRONTEND_DIR / "templates"
+_LEGACY_STATIC_DIR = _LEGACY_FRONTEND_DIR / "static"
 
-if _TEMPLATES_DIR.exists():
-    templates = Jinja2Templates(directory=str(_TEMPLATES_DIR))
-    app.mount("/static", StaticFiles(directory=str(_STATIC_DIR)), name="static")
-else:
-    templates = None
+templates = None
+if _LEGACY_TEMPLATES_DIR.exists():
+    templates = Jinja2Templates(directory=str(_LEGACY_TEMPLATES_DIR))
+    app.mount("/static", StaticFiles(directory=str(_LEGACY_STATIC_DIR)), name="static")
 
 app.include_router(users.router)
 app.include_router(oauth.router)
@@ -345,8 +347,8 @@ def _static_asset_version() -> str:
     """
     try:
         latest_mtime = 0.0
-        if _STATIC_DIR.exists():
-            for path in _STATIC_DIR.rglob("*"):
+        if _LEGACY_STATIC_DIR.exists():
+            for path in _LEGACY_STATIC_DIR.rglob("*"):
                 if path.is_file():
                     latest_mtime = max(latest_mtime, path.stat().st_mtime)
         return str(int(latest_mtime)) if latest_mtime else "0"
@@ -522,52 +524,6 @@ async def ready():
     return JSONResponse(status_code=503, content={"status": "not_ready"})
 
 
-@app.get("/", include_in_schema=False)
-async def home(request: Request):
-    return _render("landing.html", request)
-
-
-@app.get("/landing", include_in_schema=False)
-async def landing_page(request: Request):
-    return _render("landing.html", request)
-
-
-@app.get("/wireframe", include_in_schema=False)
-async def wireframe_page(request: Request):
-    """End-to-end HTML wireframe: new user journey, all screens, hash routing."""
-    return _render("wireframe.html", request)
-
-
-@app.get("/dashboard", include_in_schema=False)
-async def dashboard_page(request: Request):
-    return _render("dashboard.html", request)
-
-
-@app.get("/welcome", include_in_schema=False)
-async def welcome_page(request: Request):
-    return _render("welcome.html", request)
-
-
-@app.get("/login", include_in_schema=False)
-async def login_page(request: Request):
-    return _render("login.html", request)
-
-
-@app.get("/register", include_in_schema=False)
-async def register_page(request: Request):
-    return _render("register.html", request)
-
-
-@app.get("/forgot-password", include_in_schema=False)
-async def forgot_password_page(request: Request):
-    return _render("forgot_password.html", request)
-
-
-@app.get("/reset-password", include_in_schema=False)
-async def reset_password_page(request: Request):
-    return _render("reset_password.html", request)
-
-
 @app.get("/verify-email", include_in_schema=False)
 async def verify_email(token: str = ""):
     """Validate verification token and redirect to login with result."""
@@ -576,75 +532,9 @@ async def verify_email(token: str = ""):
     return RedirectResponse(url="/login?verified=0", status_code=302)
 
 
-@app.get("/expenses", include_in_schema=False)
-async def expenses_list_page(request: Request):
-    return _render("expenses/list.html", request)
-
-
-@app.get("/transactions", include_in_schema=False)
-async def transactions_page(request: Request):
-    return _render("transactions/list.html", request)
-
-
-@app.get("/analytics", include_in_schema=False)
-async def analytics_page(request: Request):
-    return _render("analytics.html", request)
-
-
-@app.get("/expenses/add", include_in_schema=False)
-async def expenses_add_page(request: Request):
-    return _render("expenses/add.html", request)
-
-
-@app.get("/expenses/import", include_in_schema=False)
-async def expenses_import_page(request: Request):
-    return _render("expenses/import.html", request)
-
-
-@app.get("/income", include_in_schema=False)
-async def income_list_page(request: Request):
-    return _render("income/list.html", request)
-
-
-@app.get("/income/add", include_in_schema=False)
-async def income_add_page(request: Request):
-    return _render("income/add.html", request)
-
-
-@app.get("/recurring", include_in_schema=False)
-async def recurring_list_page(request: Request):
-    return _render("recurring/list.html", request)
-
-
-@app.get("/expenses/{expense_id}", include_in_schema=False)
-async def expense_detail_page(request: Request, expense_id: str):
-    """Serve expense detail page; ensure this app (not a static server) runs on your frontend port (e.g. 8000)."""
-    return _render("expenses/detail.html", request, expense_id=expense_id)
-
-
-@app.get("/budgets", include_in_schema=False)
-async def budgets_list_page(request: Request):
-    return _render("budgets/list.html", request)
-
-
-@app.get("/budgets/add", include_in_schema=False)
-async def budgets_add_page(request: Request):
-    return _render("budgets/add.html", request)
-
-
-@app.get("/budgets/recurring", include_in_schema=False)
-async def recurring_budgets_list_page(request: Request):
-    return _render("budgets/recurring_list.html", request)
-
-
-@app.get("/budgets/recurring/{recurring_budget_id}", include_in_schema=False)
-async def recurring_budget_detail_page(request: Request, recurring_budget_id: str):
-    return _render("budgets/recurring_detail.html", request, recurring_budget_id=recurring_budget_id)
-
-
-@app.get("/budgets/{budget_id}", include_in_schema=False)
-async def budget_detail_page(request: Request, budget_id: str):
-    return _render("budgets/detail.html", request, budget_id=budget_id)
+@app.get("/savings-goals", include_in_schema=False)
+async def savings_goals_alias_page():
+    return RedirectResponse(url="/goals", status_code=302)
 
 
 @app.get("/user/{user_id}/budgets", include_in_schema=False)
@@ -653,114 +543,189 @@ async def user_budgets_redirect(user_id: str):
     return RedirectResponse(url="/budgets", status_code=302)
 
 
-@app.get("/reports", include_in_schema=False)
-async def reports_page(request: Request):
-    return _render("reports.html", request)
+def _register_frontend_page_routes():
+    """Register the server-rendered Jinja page routes — the single pocketii UI."""
+
+    @app.get("/", include_in_schema=False)
+    async def home(request: Request):
+        return _render("landing.html", request)
+
+    @app.get("/landing", include_in_schema=False)
+    async def landing_page(request: Request):
+        return _render("landing.html", request)
+
+    @app.get("/wireframe", include_in_schema=False)
+    async def wireframe_page(request: Request):
+        """End-to-end HTML wireframe: new user journey, all screens, hash routing."""
+        return _render("wireframe.html", request)
+
+    @app.get("/dashboard", include_in_schema=False)
+    async def dashboard_page(request: Request):
+        return _render("dashboard.html", request)
+
+    @app.get("/welcome", include_in_schema=False)
+    async def welcome_page(request: Request):
+        return _render("welcome.html", request)
+
+    @app.get("/login", include_in_schema=False)
+    async def login_page(request: Request):
+        return _render("login.html", request)
+
+    @app.get("/register", include_in_schema=False)
+    async def register_page(request: Request):
+        return _render("register.html", request)
+
+    @app.get("/forgot-password", include_in_schema=False)
+    async def forgot_password_page(request: Request):
+        return _render("forgot_password.html", request)
+
+    @app.get("/reset-password", include_in_schema=False)
+    async def reset_password_page(request: Request):
+        return _render("reset_password.html", request)
+
+    @app.get("/expenses", include_in_schema=False)
+    async def expenses_list_page(request: Request):
+        return _render("expenses/list.html", request)
+
+    @app.get("/transactions", include_in_schema=False)
+    async def transactions_page(request: Request):
+        return _render("transactions/list.html", request)
+
+    @app.get("/analytics", include_in_schema=False)
+    async def analytics_page(request: Request):
+        return _render("analytics.html", request)
+
+    @app.get("/expenses/add", include_in_schema=False)
+    async def expenses_add_page(request: Request):
+        return _render("expenses/add.html", request)
+
+    @app.get("/expenses/import", include_in_schema=False)
+    async def expenses_import_page(request: Request):
+        return _render("expenses/import.html", request)
+
+    @app.get("/income", include_in_schema=False)
+    async def income_list_page(request: Request):
+        return _render("income/list.html", request)
+
+    @app.get("/income/add", include_in_schema=False)
+    async def income_add_page(request: Request):
+        return _render("income/add.html", request)
+
+    @app.get("/recurring", include_in_schema=False)
+    async def recurring_list_page(request: Request):
+        return _render("recurring/list.html", request)
+
+    @app.get("/expenses/{expense_id}", include_in_schema=False)
+    async def expense_detail_page(request: Request, expense_id: str):
+        """Serve expense detail page; ensure this app (not a static server) runs on your frontend port (e.g. 8000)."""
+        return _render("expenses/detail.html", request, expense_id=expense_id)
+
+    @app.get("/budgets", include_in_schema=False)
+    async def budgets_list_page(request: Request):
+        return _render("budgets/list.html", request)
+
+    @app.get("/budgets/add", include_in_schema=False)
+    async def budgets_add_page(request: Request):
+        return _render("budgets/add.html", request)
+
+    @app.get("/budgets/recurring", include_in_schema=False)
+    async def recurring_budgets_list_page(request: Request):
+        return _render("budgets/recurring_list.html", request)
+
+    @app.get("/budgets/recurring/{recurring_budget_id}", include_in_schema=False)
+    async def recurring_budget_detail_page(request: Request, recurring_budget_id: str):
+        return _render("budgets/recurring_detail.html", request, recurring_budget_id=recurring_budget_id)
+
+    @app.get("/budgets/{budget_id}", include_in_schema=False)
+    async def budget_detail_page(request: Request, budget_id: str):
+        return _render("budgets/detail.html", request, budget_id=budget_id)
+
+    @app.get("/reports", include_in_schema=False)
+    async def reports_page(request: Request):
+        return _render("reports.html", request)
+
+    @app.get("/insights", include_in_schema=False)
+    async def insights_page(request: Request):
+        return _render("insights.html", request)
+
+    @app.get("/reports/category/{category_code}", include_in_schema=False)
+    async def reports_category_page(request: Request, category_code: str):
+        return _render("reports_category.html", request, category_code=category_code)
+
+    @app.get("/goals", include_in_schema=False)
+    async def savings_goals_page(request: Request):
+        return _render("savings_goals.html", request)
+
+    @app.get("/goals/add", include_in_schema=False)
+    async def goal_add_page(request: Request):
+        return _render("goal_add.html", request)
+
+    @app.get("/goals/{goal_id}", include_in_schema=False)
+    async def goal_detail_page(request: Request, goal_id: str):
+        return _render("goal_detail.html", request, goal_id=goal_id)
+
+    @app.get("/settings/integrations", include_in_schema=False)
+    async def integrations_page(request: Request):
+        return _render("settings/integrations.html", request)
+
+    @app.get("/investments", include_in_schema=False)
+    async def investments_page(request: Request):
+        return _render("investments.html", request)
+
+    @app.get("/recommendations", include_in_schema=False)
+    async def recommendations_page(request: Request):
+        return _render("recommendations.html", request)
+
+    @app.get("/link-bank", include_in_schema=False)
+    async def link_bank_page(request: Request):
+        return _render("link_bank.html", request)
+
+    @app.get("/link-bank/success", include_in_schema=False)
+    async def link_bank_success_page(request: Request):
+        return _render("link_bank_success.html", request)
+
+    @app.get("/link-bank/select", include_in_schema=False)
+    async def link_bank_select_page(request: Request):
+        return _render("link_bank_select.html", request)
+
+    @app.get("/net-worth", include_in_schema=False)
+    async def net_worth_page(request: Request):
+        return _render("net_worth.html", request)
+
+    @app.get("/notifications", include_in_schema=False)
+    async def notifications_page(request: Request):
+        return _render("notifications.html", request)
+
+    @app.get("/household", include_in_schema=False)
+    async def household_page(request: Request):
+        return _render("household.html", request)
+
+    @app.get("/sessions", include_in_schema=False)
+    async def sessions_page(request: Request):
+        return _render("sessions.html", request)
+
+    @app.get("/profile", include_in_schema=False)
+    async def profile_page(request: Request):
+        return _render("profile.html", request)
+
+    @app.get("/settings", include_in_schema=False)
+    async def settings_page(request: Request):
+        return _render("settings.html", request)
+
+    @app.get("/security", include_in_schema=False)
+    async def security_page(request: Request):
+        return _render("security.html", request)
+
+    @app.get("/saved-views", include_in_schema=False)
+    async def saved_views_page(request: Request):
+        return _render("saved_views.html", request)
+
+    @app.get("/verify-email/pending", include_in_schema=False)
+    async def verify_email_pending_page(request: Request, email: Optional[str] = None):
+        return _render("verify_email_pending.html", request, email=email or "")
 
 
-@app.get("/insights", include_in_schema=False)
-async def insights_page(request: Request):
-    return _render("insights.html", request)
-
-
-@app.get("/reports/category/{category_code}", include_in_schema=False)
-async def reports_category_page(request: Request, category_code: str):
-    return _render("reports_category.html", request, category_code=category_code)
-
-
-@app.get("/goals", include_in_schema=False)
-async def savings_goals_page(request: Request):
-    return _render("savings_goals.html", request)
-
-
-@app.get("/savings-goals", include_in_schema=False)
-async def savings_goals_alias_page():
-    return RedirectResponse(url="/goals", status_code=302)
-
-
-@app.get("/goals/add", include_in_schema=False)
-async def goal_add_page(request: Request):
-    return _render("goal_add.html", request)
-
-
-@app.get("/goals/{goal_id}", include_in_schema=False)
-async def goal_detail_page(request: Request, goal_id: str):
-    return _render("goal_detail.html", request, goal_id=goal_id)
-
-
-@app.get("/settings/integrations", include_in_schema=False)
-async def integrations_page(request: Request):
-    return _render("settings/integrations.html", request)
-
-
-@app.get("/investments", include_in_schema=False)
-async def investments_page(request: Request):
-    return _render("investments.html", request)
-
-
-@app.get("/recommendations", include_in_schema=False)
-async def recommendations_page(request: Request):
-    return _render("recommendations.html", request)
-
-
-@app.get("/link-bank", include_in_schema=False)
-async def link_bank_page(request: Request):
-    return _render("link_bank.html", request)
-
-
-@app.get("/link-bank/success", include_in_schema=False)
-async def link_bank_success_page(request: Request):
-    return _render("link_bank_success.html", request)
-
-
-@app.get("/link-bank/select", include_in_schema=False)
-async def link_bank_select_page(request: Request):
-    return _render("link_bank_select.html", request)
-
-
-@app.get("/net-worth", include_in_schema=False)
-async def net_worth_page(request: Request):
-    return _render("net_worth.html", request)
-
-
-@app.get("/notifications", include_in_schema=False)
-async def notifications_page(request: Request):
-    return _render("notifications.html", request)
-
-
-@app.get("/household", include_in_schema=False)
-async def household_page(request: Request):
-    return _render("household.html", request)
-
-
-@app.get("/sessions", include_in_schema=False)
-async def sessions_page(request: Request):
-    return _render("sessions.html", request)
-
-
-@app.get("/profile", include_in_schema=False)
-async def profile_page(request: Request):
-    return _render("profile.html", request)
-
-
-@app.get("/settings", include_in_schema=False)
-async def settings_page(request: Request):
-    return _render("settings.html", request)
-
-
-@app.get("/security", include_in_schema=False)
-async def security_page(request: Request):
-    return _render("security.html", request)
-
-
-@app.get("/saved-views", include_in_schema=False)
-async def saved_views_page(request: Request):
-    return _render("saved_views.html", request)
-
-
-@app.get("/verify-email/pending", include_in_schema=False)
-async def verify_email_pending_page(request: Request, email: Optional[str] = None):
-    return _render("verify_email_pending.html", request, email=email or "")
+_register_frontend_page_routes()
 
 
 app.middleware("http")(security_headers_middleware)

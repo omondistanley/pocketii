@@ -16,7 +16,7 @@ COPY user-microservice/requirements.txt ./requirements.txt
 RUN pip install --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
-# Keep repo-relative layout so app/main.py can find ../frontend
+# Repo-relative layout: app/main.py resolves parent.parent.parent to /opt/expense_tracker
 COPY user-microservice /opt/expense_tracker/user-microservice
 COPY frontend /opt/expense_tracker/frontend
 
