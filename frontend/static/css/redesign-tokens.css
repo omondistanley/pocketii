@@ -1,0 +1,61 @@
+:root {
+  --pk-nav: #123b87;
+  --pk-nav-deep: #0c2d69;
+  --pk-brand: #246bdf;
+  --pk-brand-hover: #1d58ba;
+  --pk-brand-soft: #eaf2ff;
+  --pk-canvas: #f5f6f8;
+  --pk-surface: #ffffff;
+  --pk-surface-muted: #f8f9fb;
+  --pk-text: #1d2633;
+  --pk-text-muted: #6c7787;
+  --pk-border: #dfe4eb;
+  --pk-positive: #16835b;
+  --pk-positive-soft: #eaf7f1;
+  --pk-negative: #c94b54;
+  --pk-negative-soft: #fff0f1;
+  --pk-warning: #ad6a00;
+  --pk-warning-soft: #fff6e6;
+  --pk-info: #246bdf;
+  --pk-radius-sm: 6px;
+  --pk-radius-md: 8px;
+  --pk-radius-lg: 10px;
+  --pk-radius-sheet: 16px;
+  --pk-shadow-card: 0 1px 2px rgba(20, 34, 55, 0.06);
+  --pk-shadow-overlay: 0 18px 50px rgba(20, 34, 55, 0.18);
+  --pk-sidebar-width: 238px;
+  --pk-topbar-height: 66px;
+  --pk-mobile-nav-height: 66px;
+  --pk-content-max: 1440px;
+  --pk-font: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --pk-space-1: 4px;
+  --pk-space-2: 8px;
+  --pk-space-3: 12px;
+  --pk-space-4: 16px;
+  --pk-space-5: 20px;
+  --pk-space-6: 24px;
+  --pk-space-7: 28px;
+  --pk-space-8: 32px;
+}
+
+.redesign-shell {
+  color: var(--pk-text);
+  background: var(--pk-canvas);
+  font-family: var(--pk-font);
+}
+
+.redesign-card {
+  background: var(--pk-surface);
+  border: 1px solid var(--pk-border);
+  border-radius: var(--pk-radius-lg);
+  box-shadow: var(--pk-shadow-card);
+}
+
+.redesign-focus:focus-visible,
+.redesign-shell a:focus-visible,
+.redesign-shell button:focus-visible,
+.redesign-shell input:focus-visible,
+.redesign-shell select:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--pk-brand) 30%, transparent);
+  outline-offset: 2px;
+}
