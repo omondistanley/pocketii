@@ -101,7 +101,7 @@ class AlphaVantageAdapter(MarketDataAdapter):
                 continue
             o = Decimal(str(row.get("1. open", row.get("open", 0))))
             h = Decimal(str(row.get("2. high", row.get("high", 0))))
-            l = Decimal(str(row.get("3. low", row.get("low", 0))))
+            low = Decimal(str(row.get("3. low", row.get("low", 0))))
             c = Decimal(str(row.get("4. close", row.get("close", 0))))
             v = Decimal(str(row.get("5. volume", row.get("volume", 0))))
             bars.append(
@@ -111,7 +111,7 @@ class AlphaVantageAdapter(MarketDataAdapter):
                     period_start=period_start,
                     open=o,
                     high=h,
-                    low=l,
+                    low=low,
                     close=c,
                     volume=v,
                     provider=self.provider_name,

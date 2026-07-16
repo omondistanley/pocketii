@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import asyncio
 import concurrent.futures
 import logging
+import threading as _threading
 
 from app.core.config import (
     MAX_RECOMMENDATIONS,
@@ -367,7 +368,6 @@ def _detect_holdings_etf_overlap(held_symbols: set) -> List[Dict[str, Any]]:
 #   previous sigmoid normalisation so nothing breaks.
 # ---------------------------------------------------------------------------
 
-import threading as _threading
 _lgbm_lock = _threading.Lock()
 MIN_LGBM_SAMPLES = 8
 

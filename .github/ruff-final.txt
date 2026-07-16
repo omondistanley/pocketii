@@ -1,0 +1,3 @@
+expense-microservice/app/services/gmail_receipt_service.py:190:19: F821 Undefined name `build`
+expense-microservice/app/services/gmail_receipt_service.py:592:47: F401 `googleapiclient.discovery.build` imported but unused; consider using `importlib.util.find_spec` to test for availability
+Found 2 errors.

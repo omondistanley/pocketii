@@ -185,7 +185,6 @@ def fetch_gmail_profile_email(access_token: str) -> Optional[str]:
     """Resolve the mailbox address for the authorized Gmail user (for Pub/Sub routing)."""
     try:
         from google.oauth2.credentials import Credentials  # type: ignore
-        from googleapiclient.discovery import build  # type: ignore
 
         creds = Credentials(token=access_token)
         service = build("gmail", "v1", credentials=creds, cache_discovery=False)
