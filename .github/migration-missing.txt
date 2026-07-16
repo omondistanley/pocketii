@@ -1,1 +1,0 @@
-ERROR: user migration 012_user_settings_preferences.sql is missing from deploy/release.sh
