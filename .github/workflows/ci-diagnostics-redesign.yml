@@ -1,4 +1,4 @@
-name: Focused CI diagnostics
+name: Fix migration pipeline
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  diagnose:
+  fix:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     services:
@@ -32,29 +32,39 @@ jobs:
         with:
           ref: redesign
           fetch-depth: 0
-      - name: Capture release migration omissions
+      - name: Correct release manifest and PostgreSQL strict mode
         run: |
-          bash scripts/check_migrations_in_release.sh > .github/migration-missing.txt 2>&1 || true
-      - name: Capture user migration failure
+          python - <<'PY'
+          from pathlib import Path
+
+          release = Path("deploy/release.sh")
+          text = release.read_text()
+          missing = "         /opt/expense_tracker/user-microservice/migrations/012_user_settings_preferences.sql \\\n"
+          anchor = "         /opt/expense_tracker/user-microservice/migrations/012_report_saved_view.sql \\\n"
+          if "012_user_settings_preferences.sql" not in text:
+              text = text.replace(anchor, missing + anchor, 1)
+          release.write_text(text)
+
+          ci = Path(".github/workflows/ci.yml")
+          text = ci.read_text().replace(" --on-error-stop", " -v ON_ERROR_STOP=1")
+          ci.write_text(text)
+          PY
+      - name: Verify release migration coverage
+        run: bash scripts/check_migrations_in_release.sh
+      - name: Verify user migrations apply cleanly
         run: |
-          set +e
-          : > .github/user-migration-failure.txt
           cd user-microservice
           for f in migrations/create_user_table.sql migrations/0*.sql; do
             [ -f "$f" ] || continue
-            echo "=== Applying $f ===" >> ../.github/user-migration-failure.txt
-            psql "postgresql://postgres:postgres@localhost:5434/users_db" -f "$f" --on-error-stop >> ../.github/user-migration-failure.txt 2>&1
-            status=$?
-            if [ "$status" -ne 0 ]; then
-              echo "FAILED_STATUS=$status" >> ../.github/user-migration-failure.txt
-              break
-            fi
+            echo "Applying $f"
+            psql "postgresql://postgres:postgres@localhost:5434/users_db" -v ON_ERROR_STOP=1 -f "$f"
           done
-          exit 0
-      - name: Commit focused diagnostics
+      - name: Remove diagnostic scaffolding and commit verified fix
         run: |
+          rm -f .github/migration-missing.txt .github/user-migration-failure.txt
+          rm -f .github/workflows/ci-diagnostics-redesign.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .github/migration-missing.txt .github/user-migration-failure.txt
-          git commit -m "Capture remaining CI diagnostics"
+          git add -A
+          git commit -m "Fix migration safety and CI execution"
           git push origin HEAD:redesign
