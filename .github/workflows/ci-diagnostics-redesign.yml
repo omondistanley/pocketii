@@ -1,0 +1,60 @@
+name: Focused CI diagnostics
+
+on:
+  push:
+    branches: [redesign]
+    paths:
+      - ".github/workflows/ci-diagnostics-redesign.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  diagnose:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: users_db
+        ports:
+          - 5434:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: redesign
+          fetch-depth: 0
+      - name: Capture release migration omissions
+        run: |
+          bash scripts/check_migrations_in_release.sh > .github/migration-missing.txt 2>&1 || true
+      - name: Capture user migration failure
+        run: |
+          set +e
+          : > .github/user-migration-failure.txt
+          cd user-microservice
+          for f in migrations/create_user_table.sql migrations/0*.sql; do
+            [ -f "$f" ] || continue
+            echo "=== Applying $f ===" >> ../.github/user-migration-failure.txt
+            psql "postgresql://postgres:postgres@localhost:5434/users_db" -f "$f" --on-error-stop >> ../.github/user-migration-failure.txt 2>&1
+            status=$?
+            if [ "$status" -ne 0 ]; then
+              echo "FAILED_STATUS=$status" >> ../.github/user-migration-failure.txt
+              break
+            fi
+          done
+          exit 0
+      - name: Commit focused diagnostics
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/migration-missing.txt .github/user-migration-failure.txt
+          git commit -m "Capture remaining CI diagnostics"
+          git push origin HEAD:redesign
