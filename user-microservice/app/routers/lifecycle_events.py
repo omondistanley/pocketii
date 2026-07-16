@@ -4,7 +4,7 @@ All output is informational only — not financial advice.
 """
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
-from typing import Optional, List
+from typing import Optional
 from datetime import date
 import psycopg2
 

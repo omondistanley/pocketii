@@ -9,9 +9,9 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from datetime import datetime, date, timedelta, timezone
+from datetime import datetime, date, timezone
 from decimal import Decimal
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List
 
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -129,7 +129,7 @@ def run_rebalance_buy_job(job_id: str = "") -> Dict[str, Any]:
 
     today = datetime.now(timezone.utc).date()
 
-    alpaca_conn_svc = AlpacaConnectionService(context=_DB_CONTEXT)
+    AlpacaConnectionService(context=_DB_CONTEXT)
     holdings_svc = HoldingsDataService(context=_DB_CONTEXT)
 
     sessions = _db_list_due_sell_done_sessions(today)

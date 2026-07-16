@@ -4,7 +4,7 @@ The frontend uses Teller Connect (JS widget) which returns an enrollment object 
 """
 from datetime import date, timedelta
 from decimal import Decimal
-from typing import Any, Dict, List, Optional
+from typing import Any, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
@@ -17,7 +17,6 @@ from app.services.teller_data_service import (
     encrypt_access_token,
 )
 from app.services.teller_service import (
-    is_configured,
     list_accounts,
     list_transactions,
 )
@@ -73,7 +72,7 @@ async def teller_save_enrollment(
     if not encrypted:
         raise HTTPException(status_code=500, detail="Encryption not configured")
     tds = _get_teller_data_service()
-    row = tds.save_enrollment(
+    tds.save_enrollment(
         user_id=user_id,
         enrollment_id=body.enrollment_id,
         access_token_encrypted=encrypted,

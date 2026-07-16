@@ -4,7 +4,6 @@ from uuid import UUID
 
 import json
 
-import psycopg2
 from psycopg2.extras import RealDictCursor
 from psycopg2.pool import ThreadedConnectionPool
 

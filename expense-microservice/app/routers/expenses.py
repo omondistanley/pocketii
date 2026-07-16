@@ -17,7 +17,6 @@ from app.models.expenses import (
     ExpenseCreate,
     ExpenseListParams,
     ExpenseResponse,
-    SummaryResponse,
     ExpenseUpdate,
 )
 from app.resources.expense_resource import ExpenseResource

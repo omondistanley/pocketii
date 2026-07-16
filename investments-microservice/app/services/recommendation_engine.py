@@ -543,7 +543,7 @@ class RecommendationEngine:
                 why.append("Matches or complements your stated industry/sector preferences.")
             if finance_ctx is not None:
                 why.append("Given your current savings rate and goals, we've tilted suggestions slightly more conservative where appropriate.")
-            why.append(f"Use this as a starting idea; add the symbol to Holdings when you are ready.")
+            why.append("Use this as a starting idea; add the symbol to Holdings when you are ready.")
 
             sec = get_security_info(sym) or {}
             security = {

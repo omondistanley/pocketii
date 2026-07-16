@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 import psycopg2
 from psycopg2.extras import Json, RealDictCursor

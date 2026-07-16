@@ -8,10 +8,10 @@ Informational only. Not financial advice.
 """
 import logging
 from datetime import date, timedelta
-from typing import Any, Dict, List, Optional
+from typing import List
 
 import psycopg2
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends
 
 from app.core.config import DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER
 from app.core.dependencies import get_current_user_id

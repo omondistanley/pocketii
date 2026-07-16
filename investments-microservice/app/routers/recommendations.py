@@ -3,7 +3,6 @@ import json
 import logging
 import time
 from datetime import date, datetime, timedelta, timezone
-from decimal import Decimal
 from typing import Any, Dict, List, Optional, Tuple
 from uuid import UUID
 
@@ -362,7 +361,6 @@ def _build_pagination_links(
     page: int, page_size: int, total_pages: int
 ) -> Dict[str, Optional[str]]:
     """Build HATEOAS _links for list; query part only (client appends to path)."""
-    base = f"page={page}&page_size={page_size}"
     links: Dict[str, Optional[str]] = {
         "self": f"?page={page}&page_size={page_size}",
         "first": "?page=1&page_size={}".format(page_size),

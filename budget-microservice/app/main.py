@@ -108,7 +108,7 @@ async def structured_logging_middleware(request: Request, call_next):
     start = time.perf_counter()
     try:
         response = await call_next(request)
-    except Exception as e:
+    except Exception:
         duration_ms = round((time.perf_counter() - start) * 1000, 3)
         payload = {
             "service": "budget",

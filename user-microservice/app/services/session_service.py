@@ -3,7 +3,6 @@ Phase 5: User session tracking (no 2FA). Create/list/revoke sessions.
 """
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
-from uuid import UUID
 
 import psycopg2
 from psycopg2.extras import RealDictCursor

@@ -4,7 +4,7 @@ Fetch and cache fundamental metrics (P/E, P/B, ROE, margins, D/E, growth) from y
 import json
 import logging
 from datetime import date
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 logger = logging.getLogger(__name__)
 

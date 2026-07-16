@@ -1,5 +1,4 @@
 """CRUD for user categorization rules."""
-from typing import Any, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 

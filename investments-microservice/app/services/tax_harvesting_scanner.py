@@ -5,7 +5,7 @@ Uses tax_lot when present; otherwise treats holding as one synthetic lot (avg_co
 import logging
 from datetime import date, timedelta
 from decimal import Decimal
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -147,7 +147,7 @@ def scan_harvesting_opportunities(
             for lot in lots:
                 cost_basis = lot["cost_basis"]
                 qty = lot["quantity"]
-                cost_per_share = lot["cost_per_share"]
+                lot["cost_per_share"]
                 current_value = qty * price
                 unrealized_loss = cost_basis - current_value
                 if unrealized_loss < 0 and abs(float(unrealized_loss)) >= loss_threshold_dollars:

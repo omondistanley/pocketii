@@ -2,7 +2,7 @@
 Tax-loss harvesting: harvesting opportunities and record-sale.
 """
 from decimal import Decimal
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 from fastapi import APIRouter, Depends
 

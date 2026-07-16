@@ -3,7 +3,7 @@ Anomaly nudge job: for users with recent expenses, detect anomalies and create
 in-app notifications (skip if user already gave feedback). Limit per user per run.
 """
 import logging
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 import httpx
 

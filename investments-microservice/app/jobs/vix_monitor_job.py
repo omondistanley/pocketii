@@ -7,7 +7,6 @@ import asyncio
 import logging
 from typing import Any, Dict
 
-from app.core.config import DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER
 from app.services.market_data_router import get_default_market_data_router
 
 logger = logging.getLogger(__name__)

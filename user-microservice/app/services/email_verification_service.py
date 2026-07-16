@@ -4,7 +4,6 @@ Email verification: create token on register, verify via GET /verify-email?token
 import hashlib
 import secrets
 from datetime import datetime, timedelta, timezone
-from typing import Optional
 
 import psycopg2
 from psycopg2.extras import RealDictCursor

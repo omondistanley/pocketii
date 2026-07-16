@@ -5,7 +5,6 @@ Alerts fire on daily closing price — not intraday.
 Not financial advice. All alerts are informational.
 """
 import logging
-from datetime import date, datetime, timezone
 from typing import Any, Dict, List
 
 import psycopg2

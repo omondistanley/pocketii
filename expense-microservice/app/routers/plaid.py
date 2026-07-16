@@ -249,7 +249,7 @@ async def plaid_exchange_item(
     if not encrypted:
         raise HTTPException(status_code=500, detail="Encryption not configured")
     pds = _get_plaid_data_service()
-    row = pds.save_plaid_item(
+    pds.save_plaid_item(
         user_id=user_id,
         item_id=item_id,
         access_token_encrypted=encrypted,

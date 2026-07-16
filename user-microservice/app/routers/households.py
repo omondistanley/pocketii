@@ -9,7 +9,6 @@ from fastapi import APIRouter, Depends, Header, HTTPException, Query
 from app.core.config import INTERNAL_API_KEY
 from app.core.dependencies import get_current_user
 from app.models.users import (
-    ActiveHouseholdUpdate,
     HouseholdCreate,
     HouseholdMemberInvite,
     HouseholdMemberResponse,
@@ -26,7 +25,6 @@ from app.services.household_service import (
     list_households_for_user,
     list_members,
     remove_member,
-    set_active_household,
     update_member,
 )
 from app.services.service_factory import ServiceFactory

@@ -1,7 +1,6 @@
 """
 JWT decode only. Investments service validates tokens issued by user-microservice.
 """
-from typing import Any
 
 from jose import jwt
 

@@ -1,6 +1,5 @@
 """Aggregated overview: sync status + analytics KPIs for dashboards."""
 from datetime import date, timedelta
-from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
 

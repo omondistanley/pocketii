@@ -3,7 +3,7 @@ JWT decode only. Budget service validates tokens issued by user-microservice (sa
 """
 from typing import Any
 
-from jose import JWTError, jwt
+from jose import jwt
 
 from app.core.config import ALGORITHM, SECRET_KEY, JWT_ISSUER, JWT_AUDIENCE
 

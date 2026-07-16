@@ -7,7 +7,7 @@ Not financial advice. This is informational only.
 """
 import logging
 from decimal import Decimal
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from fastapi import APIRouter, Depends
 

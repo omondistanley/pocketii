@@ -3,7 +3,7 @@ Watchlist CRUD endpoints with price alert support.
 Not financial advice. For informational purposes only.
 """
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Optional
 
 import psycopg2
 from fastapi import APIRouter, Depends, HTTPException

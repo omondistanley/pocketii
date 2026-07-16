@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from typing import Any
 
 import bcrypt
-from jose import JWTError, jwt
+from jose import jwt
 
 from app.core.config import ALGORITHM, SECRET_KEY, ACCESS_TOKEN_EXPIRE_MINUTES, JWT_ISSUER, JWT_AUDIENCE
 

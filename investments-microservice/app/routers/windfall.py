@@ -3,7 +3,6 @@ Windfall detection — surplus spike analysis.
 All output is informational only — not financial advice.
 """
 from fastapi import APIRouter, Depends, Query
-from typing import Optional
 
 from app.core.dependencies import get_current_user_id
 

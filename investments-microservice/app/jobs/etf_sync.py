@@ -61,7 +61,7 @@ def run_etf_composition_sync() -> dict:
             n = upsert_etf_holdings(context, symbol, constituents, source="csv")
             synced.append(symbol)
             logger.info("etf_sync symbol=%s constituents=%d", symbol, n)
-        except Exception as e:
+        except Exception:
             logger.exception("etf_sync_failed symbol=%s", symbol)
             errors.append(symbol)
     return {"synced": synced, "skipped": skipped, "errors": errors}

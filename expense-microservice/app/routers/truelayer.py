@@ -1,5 +1,4 @@
 """TrueLayer (EU open banking): status and link/sync skeleton. Returns 503 when not configured."""
-from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel

@@ -2,7 +2,6 @@
 Holdings data service: CRUD for investment positions.
 """
 from datetime import datetime, timezone
-from decimal import Decimal
 from typing import Any, Dict, List, Optional, Tuple
 from uuid import UUID
 

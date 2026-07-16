@@ -18,7 +18,6 @@ from app.core.config import (
 from app.services.analytics_math import (
     concentration_metrics,
     compute_returns,
-    max_drawdown,
     rolling_volatility_annualized,
     sharpe_ratio,
 )

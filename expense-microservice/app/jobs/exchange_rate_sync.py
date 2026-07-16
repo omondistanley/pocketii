@@ -77,7 +77,7 @@ def _extract_best_cube(root: ET.Element, target_date: date) -> Optional[ET.Eleme
     cubes = root.findall(".//{*}Cube[@time]")
     if not cubes:
         return None
-    target_iso = target_date.isoformat()
+    target_date.isoformat()
     exact = None
     prior: list[tuple[date, ET.Element]] = []
     for cube in cubes:

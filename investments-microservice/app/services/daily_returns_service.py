@@ -4,7 +4,7 @@ Ensures at least 90 days of daily returns per symbol where possible.
 """
 import logging
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 logger = logging.getLogger(__name__)
 

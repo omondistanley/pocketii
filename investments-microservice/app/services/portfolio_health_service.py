@@ -13,8 +13,7 @@ Score tiers:
   0-39   => Red    "Worth reviewing"
 """
 import logging
-from decimal import Decimal
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 import numpy as np
 import psycopg2

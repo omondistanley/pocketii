@@ -1,5 +1,4 @@
 """Phase 5: Session list and revoke-all-except-current (no 2FA)."""
-from typing import Any, Dict, List
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel

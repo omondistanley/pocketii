@@ -1,9 +1,7 @@
 """
 Household and membership operations for Phase 3.
 """
-from datetime import datetime, timezone
 from typing import Any
-from uuid import UUID
 
 import psycopg2
 from psycopg2.extras import RealDictCursor
