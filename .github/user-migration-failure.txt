@@ -1,4 +1,0 @@
-=== Applying migrations/create_user_table.sql ===
-/usr/lib/postgresql/16/bin/psql: unrecognized option '--on-error-stop'
-psql: hint: Try "psql --help" for more information.
-FAILED_STATUS=1
