@@ -1,4 +1,4 @@
-name: Fix migration pipeline
+name: Apply migration pipeline fixes
 
 on:
   push:
@@ -46,25 +46,31 @@ jobs:
           release.write_text(text)
 
           ci = Path(".github/workflows/ci.yml")
-          text = ci.read_text().replace(" --on-error-stop", " -v ON_ERROR_STOP=1")
-          ci.write_text(text)
+          ci.write_text(ci.read_text().replace(" --on-error-stop", " -v ON_ERROR_STOP=1"))
           PY
       - name: Verify release migration coverage
         run: bash scripts/check_migrations_in_release.sh
-      - name: Verify user migrations apply cleanly
+      - name: Capture corrected user migration sequence
         run: |
+          set +e
+          : > .github/user-migration-after-fix.txt
           cd user-microservice
           for f in migrations/create_user_table.sql migrations/0*.sql; do
             [ -f "$f" ] || continue
-            echo "Applying $f"
-            psql "postgresql://postgres:postgres@localhost:5434/users_db" -v ON_ERROR_STOP=1 -f "$f"
+            echo "=== Applying $f ===" >> ../.github/user-migration-after-fix.txt
+            psql "postgresql://postgres:postgres@localhost:5434/users_db" -v ON_ERROR_STOP=1 -f "$f" >> ../.github/user-migration-after-fix.txt 2>&1
+            status=$?
+            if [ "$status" -ne 0 ]; then
+              echo "FAILED_STATUS=$status" >> ../.github/user-migration-after-fix.txt
+              break
+            fi
           done
-      - name: Remove diagnostic scaffolding and commit verified fix
+          exit 0
+      - name: Commit fixes and focused result
         run: |
           rm -f .github/migration-missing.txt .github/user-migration-failure.txt
-          rm -f .github/workflows/ci-diagnostics-redesign.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
+          git add deploy/release.sh .github/workflows/ci.yml .github/user-migration-after-fix.txt .github/migration-missing.txt .github/user-migration-failure.txt
           git commit -m "Fix migration safety and CI execution"
           git push origin HEAD:redesign
