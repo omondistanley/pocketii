@@ -75,7 +75,7 @@ def decrypt_field(value: Optional[str]) -> Optional[str]:
         logger.warning("field_decrypt_no_key: returning raw encrypted value")
         return value
     try:
-        from cryptography.fernet import Fernet, InvalidToken
+        from cryptography.fernet import Fernet
         f = Fernet(key)
         ciphertext = value[len(_ENCRYPTED_PREFIX):]
         return f.decrypt(ciphertext.encode("utf-8")).decode("utf-8")

@@ -4,7 +4,7 @@ Ensures at least 90 days of daily returns per symbol where possible.
 """
 import logging
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 logger = logging.getLogger(__name__)
 
@@ -102,13 +102,13 @@ def backfill_daily_bars_yfinance(context: Dict[str, Any], symbol: str, days: int
                 if hasattr(ts, "tzinfo") and ts.tzinfo is None:
                     ts = ts.replace(tzinfo=timezone.utc)
                 period_start = ts
-                o, h, l, c, v = row.get("Open"), row.get("High"), row.get("Low"), row.get("Close"), row.get("Volume")
-                if c is None or (hasattr(c, "item") and str(c) == "nan"):
+                open_value, high, low, close, volume = row.get("Open"), row.get("High"), row.get("Low"), row.get("Close"), row.get("Volume")
+                if close is None or (hasattr(close, "item") and str(close) == "nan"):
                     continue
                 cur.execute(
                     f'''INSERT INTO "{SCHEMA}"."{TABLE}" (symbol, interval, period_start, open, high, low, close, volume)
                      VALUES (%s, '1d', %s, %s, %s, %s, %s, %s)''',
-                    (symbol.upper(), period_start, float(o or c), float(h or c), float(l or c), float(c), float(v or 0)),
+                    (symbol.upper(), period_start, float(open_value or close), float(high or close), float(low or close), float(close), float(volume or 0)),
                 )
                 inserted += 1
             conn.commit()

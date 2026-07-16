@@ -1,5 +1,4 @@
 """Phase 7: Calendar reminders (ICS) — recurring due dates, budget review hints."""
-from datetime import date, timedelta
 from typing import Optional
 
 import httpx

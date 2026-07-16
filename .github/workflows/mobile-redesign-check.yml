@@ -8,21 +8,38 @@ on:
       - ".github/workflows/mobile-redesign-check.yml"
 
 jobs:
-  mobile-typecheck:
-    name: Typecheck native app
+  mobile-release-check:
+    name: Validate native release candidate
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: npm
-          cache-dependency-path: mobile/package-lock.json
-      - name: Install and typecheck
+          node-version: "24"
+      - name: Install dependencies
         run: |
           cd mobile
-          npm ci
+          npm install --ignore-scripts --no-audit --no-fund
+      - name: Verify Expo SDK dependency alignment
+        run: |
+          cd mobile
+          npx expo install --check
+      - name: Typecheck native app
+        run: |
+          cd mobile
           npm run typecheck
+      - name: Validate Expo configuration
+        run: |
+          cd mobile
+          npx expo config --type public >/tmp/pocketii-expo-config.json
+          grep -q 'com.pocketii.app' /tmp/pocketii-expo-config.json
+          grep -q '1.0.0' /tmp/pocketii-expo-config.json
+      - name: Verify EAS release profiles
+        run: |
+          grep -q '"preview"' mobile/eas.json
+          grep -q '"production"' mobile/eas.json
+          grep -q '"autoIncrement": true' mobile/eas.json
+          grep -q 'https://pocketii.fly.dev' mobile/eas.json
       - name: Verify approved native navigation
         run: |
           grep -q 'title: "Overview"' 'mobile/app/(tabs)/_layout.tsx'

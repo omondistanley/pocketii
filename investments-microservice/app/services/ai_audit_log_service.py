@@ -18,7 +18,6 @@ Table DDL (run once):
     CREATE INDEX IF NOT EXISTS idx_rec_audit_user ON investments_db.recommendation_audit_log (user_id_hash, logged_at DESC);
 """
 import hashlib
-import json
 import logging
 from typing import Any, Dict, List, Optional
 

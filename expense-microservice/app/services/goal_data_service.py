@@ -7,7 +7,6 @@ from typing import Any, Dict, List, Optional, Tuple
 from uuid import UUID
 
 import psycopg2
-from fastapi import HTTPException
 from psycopg2.extras import RealDictCursor
 
 SCHEMA = "expenses_db"

@@ -3,17 +3,14 @@ Monthly close notification job.
 Runs on the 1st of each month. Sends a 3-sentence portfolio summary notification.
 Not financial advice. All content is informational.
 """
-import json
 import logging
 from datetime import date
 from typing import Any, Dict, List
 
 import psycopg2
-import requests
 
 from app.core.config import (
     DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER,
-    INVESTMENTS_SERVICE_URL,
 )
 
 logger = logging.getLogger(__name__)

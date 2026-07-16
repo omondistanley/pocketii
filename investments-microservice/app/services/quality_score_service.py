@@ -3,7 +3,7 @@ Per-holding quality score (1-10) from valuation, profitability, financial health
 Percentile within sector; trend improving/stable/deteriorating (from historical snapshots if available).
 """
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from app.services.fundamental_data_service import get_or_fetch_fundamentals
 from app.services.sector_resolver import resolve_sector
@@ -53,7 +53,7 @@ def _normalize_profitability(metrics: Dict[str, Any]) -> float:
 def _normalize_health(metrics: Dict[str, Any]) -> float:
     """Higher current/quick ratio better; lower D/E better."""
     cr = metrics.get("currentRatio") or 0
-    qr = metrics.get("quickRatio") or 0
+    metrics.get("quickRatio") or 0
     de = metrics.get("debtToEquity") or 0
     score_cr = min(1.0, (cr or 0) / 2)  # 2+ = 1
     score_de = max(0, 1 - (de or 0) / 2)  # 0 = 1, 2+ = 0

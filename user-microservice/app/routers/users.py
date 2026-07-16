@@ -14,9 +14,6 @@ from fastapi.security import OAuth2PasswordRequestForm
 from app.models.users import (
     NewUser,
     UserInfo,
-    UserMeResponse,
-    UserMeUpdate,
-    ChangePasswordRequest,
     TokenResponse,
     RefreshRequest,
     ForgotPasswordRequest,
@@ -29,14 +26,11 @@ from app.models.users import (
 from app.services.service_factory import ServiceFactory
 from app.services.refresh_token_service import (
     create_refresh_token,
-    get_refresh_token_info,
     revoke_all_refresh_tokens,
     validate_refresh_token,
 )
 from app.services.session_service import (
     create_session,
-    list_sessions,
-    revoke_all_sessions_except,
     revoke_session,
 )
 from app.services.password_reset_service import (
@@ -45,7 +39,6 @@ from app.services.password_reset_service import (
     set_password,
 )
 from app.services.email_verification_service import create_verification_token
-from app.services.password_reset_service import set_password
 from app.services.audit_log_service import write_audit_log
 from app.services.account_service import delete_user_account
 from app.core.security import verify_password, create_access_token

@@ -17,7 +17,6 @@ from psycopg2.extras import RealDictCursor
 from app.core.config import (
     APP_BASE_URL,
     APPLE_CALENDAR_CLIENT_ID,
-    APPLE_CALENDAR_REDIRECT_URI,
     CALENDAR_TOKEN_BASE_URL,
     CALENDAR_OAUTH_ENABLED,
     DB_HOST,

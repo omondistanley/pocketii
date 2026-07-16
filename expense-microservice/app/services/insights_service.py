@@ -42,7 +42,6 @@ Classifier correction loop (Sprint 2):
 """
 from collections import defaultdict
 from datetime import date, timedelta
-from decimal import Decimal
 from typing import Any, Dict, List, Optional
 
 import psycopg2

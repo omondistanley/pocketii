@@ -3,7 +3,7 @@ Resolve sector for a symbol: read from sector_cache (with TTL), else fetch via y
 Falls back to security_universe.sector if present. Returns normalized sector name or "Other".
 """
 import logging
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 from typing import Any, Dict, Optional, Tuple
 
 import psycopg2

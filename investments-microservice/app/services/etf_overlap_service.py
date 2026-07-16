@@ -4,7 +4,6 @@ Identifies double-exposure (direct stock + ETF) and ETF-to-ETF overlap.
 Not financial advice. This is informational only.
 """
 import logging
-from decimal import Decimal
 from typing import Any, Dict, List
 
 import psycopg2

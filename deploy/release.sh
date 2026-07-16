@@ -20,6 +20,7 @@ for f in /opt/expense_tracker/user-microservice/migrations/create_user_table.sql
          /opt/expense_tracker/user-microservice/migrations/009_household.sql \
          /opt/expense_tracker/user-microservice/migrations/010_household_member.sql \
          /opt/expense_tracker/user-microservice/migrations/011_active_household.sql \
+         /opt/expense_tracker/user-microservice/migrations/012_user_settings_preferences.sql \
          /opt/expense_tracker/user-microservice/migrations/012_report_saved_view.sql \
          /opt/expense_tracker/user-microservice/migrations/013_user_session.sql \
          /opt/expense_tracker/user-microservice/migrations/014_retention_policy.sql \

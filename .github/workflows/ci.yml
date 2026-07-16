@@ -7,7 +7,6 @@ on:
     branches: [main]
 
 jobs:
-  # ── Frontend CSS (Tailwind) ─────────────────────────────────────────────────
   frontend-css:
     name: Build frontend CSS
     runs-on: ubuntu-latest
@@ -15,7 +14,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - name: Install and build
@@ -33,7 +32,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - name: Install, typecheck, build JS
@@ -45,48 +44,60 @@ jobs:
       - name: Verify emitted scripts
         run: test -s frontend/static/js/auth.js && test -s frontend/static/sw.js
 
-  # ── Lint ────────────────────────────────────────────────────────────────────
   lint:
-    name: Lint
+    name: Lint (${{ matrix.service }})
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         service:
-          [
-            expense-microservice,
-            investments-microservice,
-            user-microservice,
-            budget-microservice,
-            api-gateway,
-          ]
+          - expense-microservice
+          - investments-microservice
+          - user-microservice
+          - budget-microservice
+          - api-gateway
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: pip
           cache-dependency-path: ${{ matrix.service }}/requirements.txt
-
-      - name: Install ruff
-        run: pip install ruff
-
-      - name: Run ruff
+      - name: Install Ruff
+        run: pip install ruff==0.15.21
+      - name: Run Ruff
         run: ruff check ${{ matrix.service }}/app/ --output-format=github
 
-  # ── Tests ───────────────────────────────────────────────────────────────────
-  test-expense:
-    name: Test expense-microservice
+  test:
+    name: Test ${{ matrix.service }}
     runs-on: ubuntu-latest
     needs: lint
-
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - service: expense-microservice
+            db_name: expenses_db
+            migrations: all
+          - service: investments-microservice
+            db_name: investments_db
+            migrations: all
+          - service: user-microservice
+            db_name: users_db
+            migrations: user
+          - service: budget-microservice
+            db_name: budgets_db
+            migrations: none
+          - service: api-gateway
+            db_name: gateway_test_db
+            migrations: none
     services:
       postgres:
         image: postgres:16
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: expenses_db
+          POSTGRES_DB: ${{ matrix.db_name }}
         ports:
           - 5432:5432
         options: >-
@@ -94,218 +105,54 @@ jobs:
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
-
     env:
       DB_HOST: localhost
       DB_PORT: "5432"
       DB_USER: postgres
       DB_PASSWORD: postgres
-      DB_NAME: expenses_db
+      DB_NAME: ${{ matrix.db_name }}
       SECRET_KEY: ci-test-secret-key-32-bytes-long!
       ENCRYPTION_KEY: ""
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: pip
-          cache-dependency-path: expense-microservice/requirements.txt
-
+          cache-dependency-path: ${{ matrix.service }}/requirements.txt
       - name: Install dependencies
         run: |
-          cd expense-microservice
+          cd "${{ matrix.service }}"
           pip install -r requirements.txt
           pip install pytest pytest-asyncio httpx
-
       - name: Apply migrations
+        if: matrix.migrations != 'none'
         run: |
-          cd expense-microservice
-          for f in migrations/*.sql; do
-            echo "Applying $f"
-            psql "postgresql://postgres:postgres@localhost:5432/expenses_db" -f "$f" --on-error-stop
-          done
-
+          cd "${{ matrix.service }}"
+          if [ "${{ matrix.migrations }}" = "user" ]; then
+            for f in migrations/create_user_table.sql migrations/0*.sql; do
+              [ -f "$f" ] || continue
+              echo "Applying $f"
+              psql "postgresql://postgres:postgres@localhost:5432/${{ matrix.db_name }}" -v ON_ERROR_STOP=1 -f "$f"
+            done
+          else
+            for f in migrations/*.sql; do
+              [ -f "$f" ] || continue
+              echo "Applying $f"
+              psql "postgresql://postgres:postgres@localhost:5432/${{ matrix.db_name }}" -v ON_ERROR_STOP=1 -f "$f"
+            done
+          fi
       - name: Run tests
         run: |
-          cd expense-microservice
+          cd "${{ matrix.service }}"
           python -m pytest tests/ -v --tb=short
 
-  test-investments:
-    name: Test investments-microservice
-    runs-on: ubuntu-latest
-    needs: lint
-
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: investments_db
-        ports:
-          - 5433:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 10
-
-    env:
-      DB_HOST: localhost
-      DB_PORT: "5433"
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      DB_NAME: investments_db
-      SECRET_KEY: ci-test-secret-key-32-bytes-long!
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: pip
-          cache-dependency-path: investments-microservice/requirements.txt
-
-      - name: Install dependencies
-        run: |
-          cd investments-microservice
-          pip install -r requirements.txt
-          pip install pytest pytest-asyncio httpx
-
-      - name: Apply migrations
-        run: |
-          cd investments-microservice
-          for f in migrations/*.sql; do
-            echo "Applying $f"
-            psql "postgresql://postgres:postgres@localhost:5433/investments_db" -f "$f" --on-error-stop
-          done
-
-      - name: Run tests
-        run: |
-          cd investments-microservice
-          python -m pytest tests/ -v --tb=short
-
-  test-user:
-    name: Test user-microservice
-    runs-on: ubuntu-latest
-    needs: lint
-
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: users_db
-        ports:
-          - 5434:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 10
-
-    env:
-      DB_HOST: localhost
-      DB_PORT: "5434"
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      DB_NAME: users_db
-      SECRET_KEY: ci-test-secret-key-32-bytes-long!
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: pip
-          cache-dependency-path: user-microservice/requirements.txt
-
-      - name: Install dependencies
-        run: |
-          cd user-microservice
-          pip install -r requirements.txt
-          pip install pytest pytest-asyncio httpx
-
-      - name: Apply migrations
-        run: |
-          cd user-microservice
-          for f in migrations/create_user_table.sql migrations/0*.sql; do
-            [ -f "$f" ] || continue
-            echo "Applying $f"
-            psql "postgresql://postgres:postgres@localhost:5434/users_db" -f "$f" --on-error-stop
-          done
-
-      - name: Run tests
-        run: |
-          cd user-microservice
-          python -m pytest tests/ -v --tb=short
-
-  test-budget:
-    name: Test budget-microservice
-    runs-on: ubuntu-latest
-    needs: lint
-
-    env:
-      SECRET_KEY: ci-test-secret-key-32-bytes-long!
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: pip
-          cache-dependency-path: budget-microservice/requirements.txt
-
-      - name: Install dependencies
-        run: |
-          cd budget-microservice
-          pip install -r requirements.txt
-          pip install pytest pytest-asyncio httpx
-
-      - name: Run tests
-        run: |
-          cd budget-microservice
-          python -m pytest tests/ -v --tb=short
-
-  test-gateway:
-    name: Test api-gateway
-    runs-on: ubuntu-latest
-    needs: lint
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: pip
-          cache-dependency-path: api-gateway/requirements.txt
-
-      - name: Install dependencies
-        run: |
-          cd api-gateway
-          pip install -r requirements.txt
-          pip install pytest
-
-      - name: Run tests
-        run: |
-          cd api-gateway
-          python -m pytest tests/ -v --tb=short
-
-  # ── Migration safety check ──────────────────────────────────────────────────
   migration-check:
     name: Migration safety check
     runs-on: ubuntu-latest
     needs: lint
     steps:
       - uses: actions/checkout@v4
-
       - name: Check migration file ordering
         run: |
           echo "Checking expense migrations are sequentially numbered..."
@@ -320,7 +167,9 @@ jobs:
               last=$num
             fi
           done
-          echo "✔ Expense migrations OK (last=$last)"
+          echo "Expense migrations OK (last=$last)"
+
+          echo "Checking investment migrations are sequentially numbered..."
           last=0
           for f in investments-microservice/migrations/*.sql; do
             num=$(basename "$f" | grep -oE '^[0-9]+')
@@ -332,7 +181,6 @@ jobs:
               last=$num
             fi
           done
-          echo "✔ Investments migrations OK (last=$last)"
-
-      - name: Verify deploy/release.sh lists every migration file
+          echo "Investment migrations OK (last=$last)"
+      - name: Verify release script lists every migration
         run: bash scripts/check_migrations_in_release.sh

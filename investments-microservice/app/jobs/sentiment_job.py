@@ -5,8 +5,8 @@ Run: python -m app.jobs.sentiment_job
 import json
 import logging
 import sys
-from datetime import date, timedelta, timezone
-from typing import Dict, List, Set, Tuple
+from datetime import date
+from typing import List, Set, Tuple
 
 from app.core.config import (
     DB_HOST,
@@ -48,7 +48,7 @@ def run_sentiment_job() -> dict:
     Returns { symbols_processed, alerts_published }.
     """
     context = _db_context()
-    svc = HoldingsDataService(context=context)
+    HoldingsDataService(context=context)
     import psycopg2
     from psycopg2.extras import RealDictCursor
     conn = psycopg2.connect(

@@ -107,7 +107,7 @@ class TwelveDataAdapter(MarketDataAdapter):
             period_start = _parse_ts(dt_str)
             o = Decimal(str(row.get("open", 0)))
             h = Decimal(str(row.get("high", 0)))
-            l = Decimal(str(row.get("low", 0)))
+            low = Decimal(str(row.get("low", 0)))
             c = Decimal(str(row.get("close", 0)))
             v = Decimal(str(row.get("volume", 0)))
             bars.append(
@@ -117,7 +117,7 @@ class TwelveDataAdapter(MarketDataAdapter):
                     period_start=period_start,
                     open=o,
                     high=h,
-                    low=l,
+                    low=low,
                     close=c,
                     volume=v,
                     provider=self.provider_name,

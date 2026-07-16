@@ -26,6 +26,7 @@ INCOME_TABLE = "income"
 RECURRING_TABLE = "recurring_expense"
 TAG_TABLE = "tag"
 EXPENSE_TAG_TABLE = "expense_tag"
+RECEIPT_TABLE = "receipt"
 EXCHANGE_RATE_TABLE = "exchange_rate"
 RULE_TABLE = "user_categorization_rule"
 NO_INCOME_SENT_TABLE = "no_income_notification_sent"
@@ -775,7 +776,6 @@ class ExpenseDataService:
         return resolved
 
     # --- Receipts (metadata; file storage is external) ---
-    RECEIPT_TABLE = "receipt"
 
     def insert_receipt(
         self, user_id: int, data: Dict[str, Any], expense_id: Optional[str] = None

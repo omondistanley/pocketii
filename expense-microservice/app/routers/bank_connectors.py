@@ -2,7 +2,7 @@
 from typing import Literal, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from app.adapters.truelayer_adapter import TrueLayerAdapter, is_configured as truelayer_configured
 from app.core.dependencies import get_current_user_id

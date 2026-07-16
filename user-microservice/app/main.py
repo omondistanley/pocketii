@@ -8,7 +8,7 @@ from typing import Optional
 
 import psycopg2
 import uvicorn
-from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -37,7 +37,6 @@ from app.core.config import (
     STATIC_ASSETS_NO_CACHE,
     DISABLE_SERVICE_WORKER,
 )
-from app.core.dependencies import get_current_user as get_current_user_dep
 from app.proxy import proxy_request
 from app.core.rate_limit import evaluate_rate_limit, get_client_ip
 from app.core.security import decode_token
@@ -435,7 +434,7 @@ async def structured_logging_middleware(request: Request, call_next):
     start = time.perf_counter()
     try:
         response = await call_next(request)
-    except Exception as e:
+    except Exception:
         duration_ms = round((time.perf_counter() - start) * 1000, 3)
         payload = {
             "service": "user",

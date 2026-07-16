@@ -106,13 +106,12 @@ class ExpenseResource(BaseResource):
         if apple_wallet_transaction_id is not None:
             data["apple_wallet_transaction_id"] = apple_wallet_transaction_id
         conn = self.data_service.get_connection(autocommit=False)
-        created_tags: list[Dict[str, Any]] = []
         try:
             self.data_service.acquire_user_lock(conn, user_id)
             self.data_service._insert_expense_using_conn(conn, data)
             expense_id = data["expense_id"]
             if payload.tag_ids is not None or payload.tags is not None:
-                created_tags = self.data_service.set_expense_tags(
+                self.data_service.set_expense_tags(
                     conn=conn,
                     user_id=user_id,
                     expense_id=str(expense_id),

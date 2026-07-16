@@ -13,14 +13,14 @@ from dotenv import load_dotenv
 _load_env = Path(__file__).resolve().parent.parent / ".env"
 load_dotenv(_load_env)
 
-import uvicorn
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
-from starlette.responses import Response
+import uvicorn  # noqa: E402
+from fastapi import FastAPI, Request  # noqa: E402
+from fastapi.responses import JSONResponse  # noqa: E402
+from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
+from starlette.responses import Response  # noqa: E402
 
-from app.routers import budgets, internal, recurring_budgets
-from app.core.config import (
+from app.routers import budgets, internal, recurring_budgets  # noqa: E402
+from app.core.config import (  # noqa: E402
     REDIS_URL,
     get_cors_origins,
     SECRET_KEY,
@@ -33,8 +33,8 @@ from app.core.config import (
     HSTS_MAX_AGE_SECONDS,
     API_CSP_POLICY,
 )
-from app.core.security import decode_token
-from app.events.subscriber import run_subscriber
+from app.core.security import decode_token  # noqa: E402
+from app.events.subscriber import run_subscriber  # noqa: E402
 
 logger = logging.getLogger("budget_microservice")
 
@@ -108,7 +108,7 @@ async def structured_logging_middleware(request: Request, call_next):
     start = time.perf_counter()
     try:
         response = await call_next(request)
-    except Exception as e:
+    except Exception:
         duration_ms = round((time.perf_counter() - start) * 1000, 3)
         payload = {
             "service": "budget",

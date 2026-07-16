@@ -8,7 +8,7 @@ import secrets
 import time
 from urllib.parse import urlencode
 
-from fastapi import APIRouter, Body, HTTPException, Query, Request
+from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import RedirectResponse
 import httpx
 from pydantic import BaseModel

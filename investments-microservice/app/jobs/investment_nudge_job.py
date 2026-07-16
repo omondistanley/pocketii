@@ -160,7 +160,7 @@ def _seasonal_nudges(today: date) -> List[Dict[str, Any]]:
         nudges.append({
             "type": "ira_contribution_deadline",
             "message": (
-                f"The IRA contribution deadline for the prior tax year is April 15. "
+                "The IRA contribution deadline for the prior tax year is April 15. "
                 "If you have IRA contribution headroom remaining, this is informational — consult a tax professional."
             ),
         })
@@ -170,7 +170,7 @@ def _seasonal_nudges(today: date) -> List[Dict[str, Any]]:
         nudges.append({
             "type": "year_end_review",
             "message": (
-                f"Year-end portfolio review: December is a good time to review your allocation, "
+                "Year-end portfolio review: December is a good time to review your allocation, "
                 "check for tax-loss opportunities, and confirm your goals are on track. This is informational."
             ),
         })

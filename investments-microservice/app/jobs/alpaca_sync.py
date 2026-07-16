@@ -5,7 +5,6 @@ fetches positions from Alpaca Trading API, replaces holdings with source='alpaca
 """
 import logging
 from datetime import datetime, timezone
-from decimal import Decimal
 
 from app.core.config import DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER
 from app.services.alpaca_broker_client import get_positions, position_to_holding_row

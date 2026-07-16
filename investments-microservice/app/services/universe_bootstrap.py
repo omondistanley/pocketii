@@ -4,7 +4,7 @@ Throttles to respect rate limits; optionally falls back to Alpha Vantage for fai
 """
 import asyncio
 import logging
-from typing import Any, Dict, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 from app.services.alphavantage_adapter import AlphaVantageAdapter
 from app.services.finnhub_adapter import FinnhubAdapter

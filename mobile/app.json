@@ -3,13 +3,22 @@
     "name": "pocketii",
     "slug": "pocketii",
     "scheme": "pocketii",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.pocketii.app",
+      "buildNumber": "1",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "pocketii can attach your current location to expenses you add manually when you allow it.",
         "NSCalendarsUsageDescription": "pocketii can read your device calendars to align reminders with your schedule when you allow it.",
@@ -17,12 +26,17 @@
       }
     },
     "android": {
-      "package": "com.pocketii.app"
+      "package": "com.pocketii.app",
+      "versionCode": 1
     },
     "plugins": [
       "expo-router",
       "expo-secure-store",
-      "expo-asset"
-    ]
+      "expo-asset",
+      "expo-updates"
+    ],
+    "extra": {
+      "releaseGateway": "https://pocketii.fly.dev"
+    }
   }
 }

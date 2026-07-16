@@ -44,7 +44,7 @@ def main():
         if today.day == 1 and now.hour == 9 and now.minute < 5:
             try:
                 run_monthly_close_notification_job(job_id=str(uuid.uuid4()))
-            except Exception as e:
+            except Exception:
                 pass  # logged inside job
 
         # fixed sleep keeps implementation simple and dependency-free

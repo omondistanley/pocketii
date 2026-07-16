@@ -50,7 +50,6 @@ async def import_broker_csv(
         raise HTTPException(status_code=422, detail="No valid holdings found in the CSV file.")
 
     created = 0
-    updated = 0
     skipped = 0
     errors = []
 
@@ -64,9 +63,8 @@ async def import_broker_csv(
                 currency=h.get("currency", "USD"),
                 account_type=account_type,
             )
-            from app.resources.holding_resource import HoldingResource
             resource = ServiceFactory.get_service("HoldingResource")
-            result = resource.create(user_id, payload)
+            resource.create(user_id, payload)
             created += 1
         except Exception as e:
             err_str = str(e).lower()

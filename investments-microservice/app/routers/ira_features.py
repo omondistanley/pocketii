@@ -3,7 +3,6 @@ IRA-specific informational features endpoints.
 All output is informational only — not financial advice.
 """
 from fastapi import APIRouter, Depends, Query
-from typing import Optional
 from datetime import date
 
 from app.core.dependencies import get_current_user_id

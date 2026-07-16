@@ -1,5 +1,4 @@
 """Phase 4: Saved report views API."""
-from typing import Any, Dict
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -8,7 +7,6 @@ from app.core.dependencies import get_current_user
 from app.services.saved_views_service import (
     create_saved_view,
     list_saved_views,
-    get_saved_view,
     delete_saved_view,
 )
 

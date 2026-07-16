@@ -3,7 +3,7 @@ Rule engine: evaluate user categorization rules on expense create/update and app
 """
 import logging
 from decimal import Decimal
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 from uuid import UUID
 
 import httpx

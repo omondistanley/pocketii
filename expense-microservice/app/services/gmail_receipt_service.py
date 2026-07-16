@@ -590,7 +590,6 @@ def process_pubsub_notification(
 
     results: List[Dict[str, Any]] = []
     try:
-        from googleapiclient.discovery import build  # type: ignore
         service, creds = _build_gmail_service(token_data)
 
         # Fetch message IDs added since last_history_id

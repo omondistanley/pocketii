@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import asyncio
 import concurrent.futures
 import logging
+import threading as _threading
 
 from app.core.config import (
     MAX_RECOMMENDATIONS,
@@ -367,7 +368,6 @@ def _detect_holdings_etf_overlap(held_symbols: set) -> List[Dict[str, Any]]:
 #   previous sigmoid normalisation so nothing breaks.
 # ---------------------------------------------------------------------------
 
-import threading as _threading
 _lgbm_lock = _threading.Lock()
 MIN_LGBM_SAMPLES = 8
 
@@ -543,7 +543,7 @@ class RecommendationEngine:
                 why.append("Matches or complements your stated industry/sector preferences.")
             if finance_ctx is not None:
                 why.append("Given your current savings rate and goals, we've tilted suggestions slightly more conservative where appropriate.")
-            why.append(f"Use this as a starting idea; add the symbol to Holdings when you are ready.")
+            why.append("Use this as a starting idea; add the symbol to Holdings when you are ready.")
 
             sec = get_security_info(sym) or {}
             security = {
