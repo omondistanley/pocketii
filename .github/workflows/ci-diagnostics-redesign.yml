@@ -1,4 +1,4 @@
-name: Apply migration pipeline fixes
+name: Patch CI PostgreSQL strict mode
 
 on:
   push:
@@ -10,67 +10,30 @@ permissions:
   contents: write
 
 jobs:
-  fix:
+  patch:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: users_db
-        ports:
-          - 5434:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 10
     steps:
       - uses: actions/checkout@v4
         with:
           ref: redesign
           fetch-depth: 0
-      - name: Correct release manifest and PostgreSQL strict mode
+      - name: Replace invalid psql flag and clean diagnostics
         run: |
           python - <<'PY'
           from pathlib import Path
-
-          release = Path("deploy/release.sh")
-          text = release.read_text()
-          missing = "         /opt/expense_tracker/user-microservice/migrations/012_user_settings_preferences.sql \\\n"
-          anchor = "         /opt/expense_tracker/user-microservice/migrations/012_report_saved_view.sql \\\n"
-          if "012_user_settings_preferences.sql" not in text:
-              text = text.replace(anchor, missing + anchor, 1)
-          release.write_text(text)
-
           ci = Path(".github/workflows/ci.yml")
-          ci.write_text(ci.read_text().replace(" --on-error-stop", " -v ON_ERROR_STOP=1"))
+          text = ci.read_text()
+          if "--on-error-stop" not in text:
+              raise SystemExit("Expected invalid psql flag was not found")
+          ci.write_text(text.replace(" --on-error-stop", " -v ON_ERROR_STOP=1"))
           PY
-      - name: Verify release migration coverage
-        run: bash scripts/check_migrations_in_release.sh
-      - name: Capture corrected user migration sequence
+          rm -f .github/migration-missing.txt .github/user-migration-failure.txt .github/user-migration-after-fix.txt
+          rm -f .github/workflows/ci-diagnostics-redesign.yml
+      - name: Commit CI correction
         run: |
-          set +e
-          : > .github/user-migration-after-fix.txt
-          cd user-microservice
-          for f in migrations/create_user_table.sql migrations/0*.sql; do
-            [ -f "$f" ] || continue
-            echo "=== Applying $f ===" >> ../.github/user-migration-after-fix.txt
-            psql "postgresql://postgres:postgres@localhost:5434/users_db" -v ON_ERROR_STOP=1 -f "$f" >> ../.github/user-migration-after-fix.txt 2>&1
-            status=$?
-            if [ "$status" -ne 0 ]; then
-              echo "FAILED_STATUS=$status" >> ../.github/user-migration-after-fix.txt
-              break
-            fi
-          done
-          exit 0
-      - name: Commit fixes and focused result
-        run: |
-          rm -f .github/migration-missing.txt .github/user-migration-failure.txt
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add deploy/release.sh .github/workflows/ci.yml .github/user-migration-after-fix.txt .github/migration-missing.txt .github/user-migration-failure.txt
-          git commit -m "Fix migration safety and CI execution"
+          git add -A
+          git commit -m "Fix PostgreSQL migration commands in CI"
           git push origin HEAD:redesign
