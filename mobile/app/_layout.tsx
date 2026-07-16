@@ -8,7 +8,6 @@ import {
   Inter_700Bold,
   Inter_800ExtraBold,
 } from "@expo-google-fonts/inter";
-import "../global.css";
 import { ActivityIndicator, View } from "react-native";
 import { ThemeProvider, useThemePreference } from "../src/theme";
 
