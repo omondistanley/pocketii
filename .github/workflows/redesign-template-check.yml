@@ -1,0 +1,23 @@
+name: Redesign template validation
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "frontend/templates/**"
+      - "user-microservice/tests/test_frontend_templates.py"
+      - ".github/workflows/redesign-template-check.yml"
+
+jobs:
+  jinja-templates:
+    name: Parse all Jinja templates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install template test dependencies
+        run: pip install pytest jinja2
+      - name: Validate frontend templates
+        run: pytest user-microservice/tests/test_frontend_templates.py -v
