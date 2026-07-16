@@ -5,798 +5,331 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Switch,
   Text,
   View,
 } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { GATEWAY_BASE_URL } from "../../src/config";
 import { authClient } from "../../src/authClient";
-import { gatewayJsonOptional } from "../../src/gatewayRequest";
-import { useAppTheme, type AppTheme } from "../../src/theme";
 import { formatApiDetail } from "../../src/formatApiDetail";
-import { ExpandableCard } from "../../src/components/ui/ExpandableCard";
-import { Input } from "../../src/components/ui/Input";
 import { Button } from "../../src/components/ui/Button";
-
-type RecommendationItem = {
-  symbol?: string;
-  score?: string;
-  confidence?: string;
-  full_name?: string;
-  sector?: string;
-  why_shown_one_line?: string;
-  bull_case?: string;
-  bear_case?: string;
-  data_badges?: unknown[];
-  data_freshness?: { provider?: string; stale_seconds?: number | null; as_of?: string | null };
-  proposal?: {
-    action?: string;
-    current_weight?: number;
-    target_weight?: number;
-    delta_from_current?: number;
-    turnover_estimate?: number;
-  };
-};
-
-type ExplainDetail = {
-  analystNote?: string;
-  whySelected?: string[];
-  shap?: Record<string, number>;
-  modelVersion?: string;
-};
-
-type LatestResponse = {
-  run?: { run_id?: string; id?: string; created_at?: string };
-  items?: RecommendationItem[];
-  portfolio?: Record<string, unknown>;
-  metadata?: { as_of?: string; source?: string; ttl_seconds?: number; scoring_mode?: string };
-  ui_insights?: Record<string, unknown>;
-  page_state?: string;
-  pagination?: { page: number; page_size: number; total_items: number; total_pages: number };
-};
+import { Input } from "../../src/components/ui/Input";
+import {
+  FINANCIAL_GUIDANCE_DISCLOSURE,
+  FinancialGuidanceNotice,
+} from "../../src/components/FinancialGuidanceNotice";
+import { useAppTheme, type AppTheme } from "../../src/theme";
 
 type RiskProfile = {
   risk_tolerance?: string;
   industry_preferences?: string[];
-  sharpe_objective?: number | null;
   loss_aversion?: string;
   use_finance_data_for_recommendations?: boolean;
 };
 
-const RISK_CHIPS = ["conservative", "balanced", "aggressive"] as const;
-const LOSS_CHIPS = ["low", "moderate", "high"] as const;
+type Recommendation = {
+  symbol?: string;
+  full_name?: string;
+  sector?: string;
+  score?: number | string;
+  confidence?: number | string;
+  why_shown_one_line?: string;
+  bull_case?: string;
+  bear_case?: string;
+};
 
-export default function RecommendationsScreen() {
+type LatestResponse = {
+  run?: { run_id?: string; id?: string; created_at?: string };
+  items?: Recommendation[];
+  portfolio?: Record<string, unknown>;
+  pagination?: { total_items?: number };
+};
+
+type ExplainResponse = {
+  explanation?: {
+    analyst_note?: string;
+    why_selected?: string[];
+    risk_notes?: string[];
+    data_freshness?: Record<string, unknown>;
+  };
+};
+
+const RISK = ["conservative", "balanced", "aggressive"] as const;
+const LOSS = ["low", "moderate", "high"] as const;
+
+function numberOrNull(value: unknown): number | null {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+}
+
+export default function GuidanceScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const theme = useAppTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [resp, setResp] = useState<LatestResponse | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [risk, setRisk] = useState<RiskProfile | null>(null);
-  const [riskLoading, setRiskLoading] = useState(true);
-  const [savingPrefs, setSavingPrefs] = useState(false);
-  const [editTolerance, setEditTolerance] = useState("balanced");
-  const [editIndustries, setEditIndustries] = useState("");
-  const [editSharpe, setEditSharpe] = useState("");
-  const [editLoss, setEditLoss] = useState("moderate");
-  const [editFinanceData, setEditFinanceData] = useState(false);
-  const [expandedSym, setExpandedSym] = useState<string | null>(null);
-  const [explainBySym, setExplainBySym] = useState<Record<string, ExplainDetail>>({});
-  const [explainBusy, setExplainBusy] = useState<string | null>(null);
-  const [holdingModal, setHoldingModal] = useState<{ symbol: string } | null>(null);
-  const [hqty, setHqty] = useState("1");
-  const [hcost, setHcost] = useState("");
-  const [holdingBusy, setHoldingBusy] = useState(false);
-  const [riskLoadError, setRiskLoadError] = useState<string | null>(null);
-  const [dismissedSyms, setDismissedSyms] = useState<Set<string>>(new Set());
-  const [reminderSyms, setReminderSyms] = useState<Set<string>>(new Set());
-  const [surplusData, setSurplusData] = useState<Record<string, unknown> | null>(null);
-  const [sectorData, setSectorData] = useState<{
-    sectors?: { name: string; pct: number; value: number }[];
-    concentration_warning?: boolean;
-    total_value?: number;
-  } | null>(null);
-  const [digestData, setDigestData] = useState<{
-    digest?: { headline?: string; body_text?: string; portfolio_score?: number; surplus_amount?: number } | null;
-  } | null>(null);
-  const [extrasLoading, setExtrasLoading] = useState(true);
+  const [latest, setLatest] = useState<LatestResponse | null>(null);
+  const [risk, setRisk] = useState("balanced");
+  const [loss, setLoss] = useState("moderate");
+  const [industries, setIndustries] = useState("");
+  const [useFinance, setUseFinance] = useState(false);
+  const [selected, setSelected] = useState<Recommendation | null>(null);
+  const [explain, setExplain] = useState<ExplainResponse | null>(null);
+  const [explainLoading, setExplainLoading] = useState(false);
 
-  const runId = useMemo(() => {
-    const r = resp?.run;
-    if (!r) return "";
-    return String((r as { run_id?: string }).run_id ?? (r as { id?: string }).id ?? "");
-  }, [resp]);
+  const runId = String(latest?.run?.run_id ?? latest?.run?.id ?? "");
 
-  const loadRisk = useCallback(async () => {
-    setRiskLoading(true);
-    setRiskLoadError(null);
-    try {
-      const res = await authClient.requestWithRefresh(`${GATEWAY_BASE_URL}/api/v1/risk-profile`, {
-        method: "GET",
-      });
-      const json = (await res.json().catch(() => null)) as RiskProfile | null;
-      if (!res.ok) {
-        setRisk(null);
-        setRiskLoadError(formatApiDetail((json as any)?.detail, "Could not load risk profile."));
-        return;
-      }
-      setRisk(json);
-      setEditTolerance(String(json?.risk_tolerance ?? "balanced"));
-      setEditIndustries((json?.industry_preferences ?? []).join(", "));
-      setEditSharpe(json?.sharpe_objective != null ? String(json.sharpe_objective) : "");
-      setEditLoss(String(json?.loss_aversion ?? "moderate"));
-      setEditFinanceData(Boolean(json?.use_finance_data_for_recommendations));
-    } catch {
-      setRisk(null);
-      setRiskLoadError("Could not load risk profile.");
-    } finally {
-      setRiskLoading(false);
+  const request = useCallback(async (path: string, init?: RequestInit) => {
+    const response = await authClient.requestWithRefresh(`${GATEWAY_BASE_URL}${path}`, init);
+    const json = await response.json().catch(() => null);
+    if (!response.ok) {
+      throw new Error(formatApiDetail((json as any)?.detail, `Request failed (${response.status})`));
     }
+    return json;
   }, []);
 
-  const loadFinanceExtras = useCallback(async () => {
-    setExtrasLoading(true);
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(null);
     try {
-      const [s, sec, dig] = await Promise.all([
-        gatewayJsonOptional<Record<string, unknown>>("/api/v1/surplus", { method: "GET" }),
-        gatewayJsonOptional<{
-          sectors?: { name: string; pct: number; value: number }[];
-          concentration_warning?: boolean;
-          total_value?: number;
-        }>("/api/v1/portfolio/sector-breakdown", { method: "GET" }),
-        gatewayJsonOptional<{
-          digest?: { headline?: string; body_text?: string; portfolio_score?: number; surplus_amount?: number } | null;
-        }>("/api/v1/recommendations/digest/latest", { method: "GET" }),
+      const [profile, recs] = await Promise.all([
+        request("/api/v1/risk-profile"),
+        request("/api/v1/recommendations/latest?page=1&page_size=20&enrich=1"),
       ]);
-      setSurplusData(s.ok && s.data ? s.data : null);
-      setSectorData(sec.ok && sec.data ? sec.data : null);
-      setDigestData(dig.ok && dig.data ? dig.data : null);
-    } finally {
-      setExtrasLoading(false);
-    }
-  }, []);
-
-  const fetchLatest = async (page = 1, append = false) => {
-    if (append) setLoadingMore(true);
-    else setLoading(true);
-    setError(null);
-    try {
-      const res = await authClient.requestWithRefresh(
-        `${GATEWAY_BASE_URL}/api/v1/recommendations/latest?page=${page}&page_size=20&enrich=1`,
-        { method: "GET" },
-      );
-      const json = (await res.json().catch(() => null)) as LatestResponse | null;
-      if (!res.ok) {
-        throw new Error(formatApiDetail((json as any)?.detail, "Failed to load recommendations."));
-      }
-      if (append && json) {
-        setResp((prev) => {
-          const prevItems = prev?.items ?? [];
-          const nextItems = json.items ?? [];
-          return { ...json, items: [...prevItems, ...nextItems] };
-        });
-      } else {
-        setResp(json);
-      }
-      setCurrentPage(page);
-      setTotalPages(Number(json?.pagination?.total_pages ?? 1) || 1);
+      const p = (profile ?? {}) as RiskProfile;
+      setRisk(String(p.risk_tolerance ?? "balanced"));
+      setLoss(String(p.loss_aversion ?? "moderate"));
+      setIndustries(Array.isArray(p.industry_preferences) ? p.industry_preferences.join(", ") : "");
+      setUseFinance(Boolean(p.use_finance_data_for_recommendations));
+      setLatest((recs ?? {}) as LatestResponse);
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Failed to load recommendations.");
+      setError(e instanceof Error ? e.message : "Could not load guidance.");
     } finally {
-      if (append) setLoadingMore(false);
-      else setLoading(false);
+      setLoading(false);
     }
-  };
+  }, [request]);
 
   useEffect(() => {
-    loadRisk();
-  }, [loadRisk]);
+    void load();
+  }, [load]);
 
-  useEffect(() => {
-    fetchLatest();
-  }, []);
-
-  useEffect(() => {
-    loadFinanceExtras();
-  }, [loadFinanceExtras]);
-
-  const items: RecommendationItem[] = useMemo(() => resp?.items ?? [], [resp]);
-  const pageState = String(resp?.page_state ?? "");
-
-  const savePrefs = async () => {
-    setSavingPrefs(true);
+  const savePreferences = async () => {
+    setSaving(true);
     setError(null);
     try {
-      const sharpe =
-        editSharpe.trim() === "" ? null : Number(editSharpe.replace(/,/g, ""));
-      const body: Record<string, unknown> = {
-        risk_tolerance: editTolerance,
-        industry_preferences: editIndustries,
-        loss_aversion: editLoss,
-        use_finance_data_for_recommendations: editFinanceData,
-      };
-      if (sharpe !== null && Number.isFinite(sharpe)) body.sharpe_objective = sharpe;
-      const res = await authClient.requestWithRefresh(`${GATEWAY_BASE_URL}/api/v1/risk-profile`, {
+      await request("/api/v1/risk-profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        body: JSON.stringify({
+          risk_tolerance: risk,
+          loss_aversion: loss,
+          industry_preferences: industries.split(",").map((x) => x.trim()).filter(Boolean),
+          use_finance_data_for_recommendations: useFinance,
+        }),
       });
-      const json = await res.json().catch(() => null);
-      if (!res.ok) {
-        throw new Error(formatApiDetail((json as any)?.detail, "Failed to save preferences."));
-      }
-      setRisk(json as RiskProfile);
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Save failed.");
+      setError(e instanceof Error ? e.message : "Could not save preferences.");
     } finally {
-      setSavingPrefs(false);
+      setSaving(false);
     }
   };
 
-  const runNow = async () => {
+  const runAnalysis = async () => {
     setRunning(true);
     setError(null);
     try {
-      const res = await authClient.requestWithRefresh(`${GATEWAY_BASE_URL}/api/v1/recommendations/run`, {
+      await savePreferences();
+      await request("/api/v1/recommendations/run", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: "{}",
       });
-      const json = await res.json().catch(() => null);
-      if (!res.ok) {
-        throw new Error(formatApiDetail((json as any)?.detail, "Run failed."));
-      }
-      await fetchLatest(1, false);
+      await load();
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Run failed.");
+      setError(e instanceof Error ? e.message : "Could not run analysis.");
     } finally {
       setRunning(false);
     }
   };
 
-  const loadExplain = async (symbol: string) => {
-    if (!runId) {
-      setError("No recommendation run id — run recommendations first.");
-      return;
-    }
-    setExplainBusy(symbol);
-    setError(null);
+  const openDetails = async (item: Recommendation) => {
+    setSelected(item);
+    setExplain(null);
+    if (!runId || !item.symbol) return;
+    setExplainLoading(true);
     try {
-      const res = await authClient.requestWithRefresh(
-        `${GATEWAY_BASE_URL}/api/v1/recommendations/${encodeURIComponent(runId)}/explain/${encodeURIComponent(symbol)}`,
-        { method: "GET" },
+      const result = await request(
+        `/api/v1/recommendations/${encodeURIComponent(runId)}/explain/${encodeURIComponent(item.symbol)}`,
       );
-      const json = await res.json().catch(() => null);
-      if (!res.ok) {
-        throw new Error(formatApiDetail((json as any)?.detail, "Could not load details."));
-      }
-      const expl = (json as { explanation?: Record<string, unknown> })?.explanation ?? {};
-      const sb = (expl.score_breakdown as Record<string, unknown> | undefined) ?? {};
-      const fc = (expl.factor_contributions ?? sb.factor_contributions) as Record<string, number> | undefined;
-      const shap: Record<string, number> | undefined =
-        fc && typeof fc === "object"
-          ? Object.fromEntries(
-              Object.entries(fc).map(([k, v]) => [k, typeof v === "number" ? v : parseFloat(String(v)) || 0]),
-            )
-          : undefined;
-      const whySelected = Array.isArray(expl.why_selected)
-        ? (expl.why_selected as unknown[]).map(String).slice(0, 4)
-        : undefined;
-      const analystNote = String(expl.analyst_note_detail ?? expl.analyst_note ?? "").slice(0, 600) || undefined;
-      const modelVersion = String(expl.model_version ?? sb.model_version ?? "").trim() || undefined;
-      const detail: ExplainDetail = { analystNote, whySelected, shap, modelVersion };
-      setExplainBySym((m) => ({ ...m, [symbol]: detail }));
+      setExplain((result ?? {}) as ExplainResponse);
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Explain failed.");
+      setError(e instanceof Error ? e.message : "Could not load explanation.");
     } finally {
-      setExplainBusy(null);
+      setExplainLoading(false);
     }
   };
 
-  const submitHolding = async () => {
-    if (!holdingModal) return;
-    const qty = Number(String(hqty).replace(/,/g, ""));
-    const cost = Number(String(hcost).replace(/,/g, ""));
-    if (!Number.isFinite(qty) || qty <= 0) {
-      setError("Enter a valid quantity.");
-      return;
-    }
-    if (!Number.isFinite(cost) || cost < 0) {
-      setError("Enter a valid average cost.");
-      return;
-    }
-    setHoldingBusy(true);
-    setError(null);
-    try {
-      const res = await authClient.requestWithRefresh(`${GATEWAY_BASE_URL}/api/v1/holdings`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          symbol: holdingModal.symbol.toUpperCase(),
-          quantity: qty,
-          avg_cost: cost,
-          currency: "USD",
-        }),
-      });
-      const json = await res.json().catch(() => null);
-      if (!res.ok) {
-        throw new Error(formatApiDetail((json as any)?.detail, "Could not add holding."));
-      }
-      setHoldingModal(null);
-      setHqty("1");
-      setHcost("");
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Add holding failed.");
-    } finally {
-      setHoldingBusy(false);
-    }
-  };
+  const items = latest?.items ?? [];
+  const portfolioValue = numberOrNull(latest?.portfolio?.total_value);
 
   return (
-    <ScrollView
-      contentContainerStyle={[
-        styles.container,
-        { paddingTop: insets.top + 12, paddingBottom: insets.bottom + 32 },
-      ]}
-      keyboardShouldPersistTaps="handled"
-    >
-      <View style={styles.headerRow}>
-        <Pressable onPress={() => router.back()} style={styles.backBtn}>
-          <Text style={styles.backText}>Back</Text>
-        </Pressable>
-        <Text style={styles.title}>Recommendations</Text>
-        <View style={{ width: 60 }} />
-      </View>
+    <>
+      <ScrollView
+        style={{ backgroundColor: theme.colors.background }}
+        contentContainerStyle={[styles.container, { paddingTop: insets.top + 10, paddingBottom: insets.bottom + 32 }]}
+      >
+        <View style={styles.header}>
+          <Pressable onPress={() => router.back()} style={styles.iconButton}>
+            <MaterialCommunityIcons name="arrow-left" size={20} color={theme.colors.onSurface} />
+          </Pressable>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.title}>Guidance</Text>
+            <Text style={styles.subtitle}>Ranked informational analysis based on your preferences.</Text>
+          </View>
+        </View>
 
-      {pageState === "volatile" ? (
-        <View style={[styles.bannerCard, styles.bannerWarn]}>
-          <Text style={styles.bannerTitle}>Markets are volatile</Text>
-          <Text style={styles.bannerText}>Use this ranking as context only, not as an instruction to trade.</Text>
-        </View>
-      ) : null}
-      {pageState === "first_run" ? (
-        <View style={[styles.bannerCard, styles.bannerInfo]}>
-          <Text style={styles.bannerTitle}>First run setup</Text>
-          <Text style={styles.bannerText}>Save preferences, then run analysis to generate your first ranked set.</Text>
-        </View>
-      ) : null}
-      {pageState === "steady" ? (
-        <View style={[styles.bannerCard, styles.bannerOk]}>
-          <Text style={styles.bannerTitle}>Portfolio looks steady</Text>
-          <Text style={styles.bannerText}>Current allocation appears within expected range for your settings.</Text>
-        </View>
-      ) : null}
+        <FinancialGuidanceNotice />
 
-      <Text style={styles.sectionK}>Your preferences (used by the engine)</Text>
-      {riskLoadError ? <Text style={styles.errorText}>{riskLoadError}</Text> : null}
-      {riskLoading ? (
-        <ActivityIndicator color={theme.colors.primary} />
-      ) : (
-        <View style={styles.prefsCard}>
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Preferences</Text>
+          <Text style={styles.cardSub}>These inputs shape ranking and explanation, not instructions to trade.</Text>
           <Text style={styles.label}>Risk tolerance</Text>
-          <View style={styles.chipRow}>
-            {RISK_CHIPS.map((c) => {
-              const on = editTolerance === c;
-              return (
-                <Pressable key={c} style={[styles.chip, on && styles.chipOn]} onPress={() => setEditTolerance(c)}>
-                  <Text style={[styles.chipTxt, on && styles.chipTxtOn]}>{c}</Text>
-                </Pressable>
-              );
-            })}
+          <View style={styles.chips}>
+            {RISK.map((value) => (
+              <Pressable key={value} onPress={() => setRisk(value)} style={[styles.chip, risk === value && styles.chipActive]}>
+                <Text style={[styles.chipText, risk === value && styles.chipTextActive]}>{value}</Text>
+              </Pressable>
+            ))}
           </View>
-          <Text style={[styles.label, { marginTop: 12 }]}>Industries (comma-separated)</Text>
-          <Input
-            value={editIndustries}
-            onChangeText={setEditIndustries}
-            placeholder="technology, healthcare, broad_market"
-          />
-          <Text style={[styles.label, { marginTop: 12 }]}>Sharpe objective (optional)</Text>
-          <Input value={editSharpe} onChangeText={setEditSharpe} keyboardType="decimal-pad" placeholder="e.g. 0.5" />
-          <Text style={[styles.label, { marginTop: 12 }]}>Loss aversion</Text>
-          <View style={styles.chipRow}>
-            {LOSS_CHIPS.map((c) => {
-              const on = editLoss === c;
-              return (
-                <Pressable key={c} style={[styles.chip, on && styles.chipOn]} onPress={() => setEditLoss(c)}>
-                  <Text style={[styles.chipTxt, on && styles.chipTxtOn]}>{c}</Text>
-                </Pressable>
-              );
-            })}
+          <Text style={styles.label}>Loss aversion</Text>
+          <View style={styles.chips}>
+            {LOSS.map((value) => (
+              <Pressable key={value} onPress={() => setLoss(value)} style={[styles.chip, loss === value && styles.chipActive]}>
+                <Text style={[styles.chipText, loss === value && styles.chipTextActive]}>{value}</Text>
+              </Pressable>
+            ))}
           </View>
-          <View style={styles.switchRow}>
-            <Text style={styles.switchLabel}>Use finance data (budgets, goals) in recommendations</Text>
-            <Switch value={editFinanceData} onValueChange={setEditFinanceData} />
+          <Text style={styles.label}>Industries or sectors</Text>
+          <Input value={industries} onChangeText={setIndustries} placeholder="technology, healthcare, broad market" />
+          <Pressable style={styles.financeToggle} onPress={() => setUseFinance((v) => !v)}>
+            <MaterialCommunityIcons
+              name={useFinance ? "checkbox-marked" : "checkbox-blank-outline"}
+              size={22}
+              color={theme.colors.primary}
+            />
+            <Text style={styles.financeCopy}>Use budgets, goals, income, and expenses to personalize context</Text>
+          </Pressable>
+          <View style={styles.actions}>
+            <Button title="Save preferences" onPress={savePreferences} loading={saving} disabled={saving || running} tone="secondary" />
+            <Button title="Run analysis" onPress={runAnalysis} loading={running} disabled={saving || running} />
           </View>
-          <Button title="Save preferences" onPress={savePrefs} loading={savingPrefs} disabled={savingPrefs} />
         </View>
-      )}
 
-      <View style={styles.actionsRow}>
-        {running ? <ActivityIndicator color={theme.colors.primary} /> : <Button title="Run now" onPress={runNow} />}
-      </View>
+        {portfolioValue !== null ? (
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Portfolio context</Text>
+            <Text style={styles.metric}>${portfolioValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</Text>
+            <Text style={styles.cardSub}>Value included in the latest analytical snapshot.</Text>
+          </View>
+        ) : null}
 
-      <Text style={[styles.sectionK, { marginTop: 8 }]}>Context (web parity)</Text>
-      {extrasLoading ? (
-        <ActivityIndicator color={theme.colors.primary} style={{ alignSelf: "flex-start" }} />
-      ) : (
-        <View style={styles.prefsCard}>
-          {digestData?.digest ? (
-            <>
-              <Text style={styles.label}>Latest digest</Text>
-              <Text style={styles.blockBody}>
-                {(digestData.digest.headline || "").trim() || "—"}
-              </Text>
-              {digestData.digest.body_text ? (
-                <Text style={[styles.blockBody, { marginTop: 6 }]}>
-                  {String(digestData.digest.body_text).slice(0, 500)}
-                  {String(digestData.digest.body_text).length > 500 ? "…" : ""}
-                </Text>
-              ) : null}
-            </>
-          ) : (
-            <Text style={styles.mutedText}>No weekly digest yet.</Text>
-          )}
-          {surplusData && typeof surplusData.investable_surplus === "number" ? (
-            <>
-              <Text style={[styles.label, { marginTop: 12 }]}>Investable surplus (estimate)</Text>
-              <Text style={styles.blockBody}>
-                ${Number(surplusData.investable_surplus).toFixed(2)} —{" "}
-                {String(surplusData.disclaimer || "").slice(0, 120)}
-              </Text>
-            </>
-          ) : (
-            <Text style={[styles.mutedText, { marginTop: 10 }]}>Surplus data unavailable.</Text>
-          )}
-          {sectorData?.sectors?.length ? (
-            <>
-              <Text style={[styles.label, { marginTop: 12 }]}>Sector mix</Text>
-              {sectorData.sectors.slice(0, 6).map((s) => (
-                <Text key={s.name} style={styles.blockBody}>
-                  {s.name}: {s.pct}% (${s.value.toFixed(0)})
-                </Text>
-              ))}
-              {sectorData.concentration_warning ? (
-                <Text style={[styles.blockBody, { color: "#b45309", marginTop: 6 }]}>
-                  Concentration warning: one sector exceeds threshold.
-                </Text>
-              ) : null}
-            </>
-          ) : (
-            <Text style={[styles.mutedText, { marginTop: 10 }]}>No holdings for sector breakdown.</Text>
-          )}
-        </View>
-      )}
+        {error ? <Text style={styles.error}>{error}</Text> : null}
+        {loading ? <ActivityIndicator color={theme.colors.primary} style={{ marginTop: 24 }} /> : null}
 
-      <Text style={styles.sectionK}>Portfolio risk snapshot</Text>
-      <View style={styles.prefsCard}>
-        {resp?.portfolio ? (
-          <>
-            <Text style={styles.blockBody}>Total value: ${Number((resp.portfolio as any).total_value ?? 0).toFixed(2)}</Text>
-            <Text style={styles.blockBody}>Sharpe: {String((resp.portfolio as any).sharpe ?? "—")}</Text>
-            <Text style={styles.blockBody}>Volatility (annual): {String((resp.portfolio as any).volatility_annual ?? "—")}</Text>
-            <Text style={styles.blockBody}>Max drawdown: {String((resp.portfolio as any).max_drawdown ?? "—")}</Text>
-          </>
-        ) : (
-          <Text style={styles.mutedText}>Run recommendations to see portfolio risk metrics.</Text>
-        )}
-      </View>
+        {!loading && !items.length ? (
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>No guidance yet</Text>
+            <Text style={styles.cardSub}>Save preferences and run analysis to generate an informational ranked list.</Text>
+          </View>
+        ) : null}
 
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
-
-      {loading ? (
-        <ActivityIndicator style={{ marginTop: 16 }} color={theme.colors.primary} />
-      ) : items.length ? (
-        items.filter((it) => !dismissedSyms.has(String(it.symbol ?? "").trim().toUpperCase())).map((it, idx) => {
-          const sym = String(it.symbol ?? "").trim().toUpperCase();
-          const open = expandedSym === sym;
-          const toggleSym = () => {
-            if (!sym) return;
-            setExpandedSym(open ? null : sym);
-          };
+        {items.map((item, index) => {
+          const confidenceRaw = numberOrNull(item.confidence);
+          const confidence = confidenceRaw === null ? null : confidenceRaw <= 1 ? confidenceRaw * 100 : confidenceRaw;
           return (
-            <ExpandableCard
-              key={`${sym || "x"}-${idx}`}
-              expanded={open}
-              onToggle={toggleSym}
-              onSummaryPress={toggleSym}
-              style={styles.cardOuter}
-              summary={
-                <View style={styles.rowInner}>
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.rowTitle}>{it.symbol ?? "—"}</Text>
-                    {it.full_name ? <Text style={styles.fullName}>{it.full_name}</Text> : null}
-                    <Text style={styles.subText}>{it.why_shown_one_line ?? ""}</Text>
-                    {it.sector ? <Text style={styles.metaText}>Sector: {it.sector}</Text> : null}
-                    {it.proposal?.action ? (
-                      <Text style={styles.metaText}>
-                        Proposal: {String(it.proposal.action).replace(/_/g, " ")}
-                        {typeof it.proposal.delta_from_current === "number"
-                          ? ` (${(it.proposal.delta_from_current * 100).toFixed(2)}% delta)`
-                          : ""}
-                      </Text>
-                    ) : null}
-                    {it.data_freshness?.provider ? (
-                      <Text style={styles.metaText}>
-                        Data: {it.data_freshness.provider}
-                        {typeof it.data_freshness.stale_seconds === "number"
-                          ? ` · stale ${Math.round(it.data_freshness.stale_seconds)}s`
-                          : ""}
-                      </Text>
-                    ) : null}
-                  </View>
-                  <View style={{ alignItems: "flex-end", minWidth: 72 }}>
-                    <Text style={styles.scoreText}>Score: {it.score ?? "—"}</Text>
-                    {(() => {
-                      const raw = it.confidence != null ? parseFloat(String(it.confidence)) : null;
-                      const pct = raw != null && !isNaN(raw) ? (raw <= 1 ? Math.round(raw * 100) : Math.round(raw)) : null;
-                      const barColor = pct == null ? "#94a3b8" : pct >= 75 ? "#10b981" : pct >= 50 ? "#f59e0b" : "#ef4444";
-                      return pct != null ? (
-                        <View style={{ width: 72, marginTop: 6 }}>
-                          <Text style={[styles.confText, { color: barColor }]}>{pct}% conf</Text>
-                          <View style={{ height: 4, borderRadius: 99, backgroundColor: "rgba(0,0,0,0.08)", marginTop: 3, overflow: "hidden" }}>
-                            <View style={{ width: `${pct}%` as any, height: "100%", borderRadius: 99, backgroundColor: barColor }} />
-                          </View>
-                        </View>
-                      ) : <Text style={styles.confText}>Conf: —</Text>;
-                    })()}
-                  </View>
+            <View style={styles.card} key={`${item.symbol ?? "item"}-${index}`}>
+              <View style={styles.resultHeader}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.symbol}>{item.symbol ?? "—"}</Text>
+                  <Text style={styles.cardSub}>{item.full_name ?? item.sector ?? "Portfolio candidate"}</Text>
                 </View>
-              }
-            >
-              {sym ? (
-                <>
-                  {it.bull_case ? (
-                    <Text style={styles.blockLabel}>Bull case</Text>
-                  ) : null}
-                  {it.bull_case ? <Text style={styles.blockBody}>{it.bull_case}</Text> : null}
-                  {it.bear_case ? <Text style={styles.blockLabel}>Bear case</Text> : null}
-                  {it.bear_case ? <Text style={styles.blockBody}>{it.bear_case}</Text> : null}
-                  <Button
-                    title={explainBySym[sym] ? "Refresh detail" : "Load analyst detail"}
-                    onPress={() => loadExplain(sym)}
-                    loading={explainBusy === sym}
-                    disabled={explainBusy !== null}
-                    tone="secondary"
-                  />
-                  {explainBySym[sym] ? (() => {
-                    const d = explainBySym[sym];
-                    const shapEntries = d.shap
-                      ? Object.entries(d.shap)
-                          .filter(([, v]) => Math.abs(v) > 0.0001)
-                          .sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]))
-                      : [];
-                    const maxAbs = shapEntries.length
-                      ? Math.max(...shapEntries.map(([, v]) => Math.abs(v)))
-                      : 1;
-                    const SHAP_LABELS: Record<string, string> = {
-                      heuristic_score: "Risk-adj. score",
-                      weight: "Position weight",
-                      vol_annual: "Volatility",
-                      hhi: "Concentration",
-                      tlh_loss_scaled: "TLH opportunity",
-                    };
-                    return (
-                      <View style={styles.explainSection}>
-                        {shapEntries.length > 0 && (
-                          <View style={styles.shapBlock}>
-                            <Text style={styles.shapTitle}>Score drivers</Text>
-                            {shapEntries.map(([key, val]) => {
-                              const barPct = (Math.abs(val) / maxAbs) * 100;
-                              const barColor = val > 0 ? theme.colors.primary : "#e53e3e";
-                              const label = SHAP_LABELS[key] ?? key.replace(/_/g, " ");
-                              return (
-                                <View key={key} style={styles.shapRow}>
-                                  <Text style={styles.shapLabel}>{label}</Text>
-                                  <View style={styles.shapTrack}>
-                                    <View style={[styles.shapFill, { width: `${barPct}%` as any, backgroundColor: barColor }]} />
-                                  </View>
-                                  <Text style={[styles.shapVal, { color: val > 0 ? theme.colors.primary : "#e53e3e" }]}>
-                                    {(val > 0 ? "+" : "") + val.toFixed(3)}
-                                  </Text>
-                                </View>
-                              );
-                            })}
-                            {d.modelVersion ? (
-                              <Text style={styles.shapMeta}>Model: {d.modelVersion}</Text>
-                            ) : null}
-                          </View>
-                        )}
-                        {d.whySelected && d.whySelected.length > 0 && (
-                          <View style={{ marginTop: 8 }}>
-                            <Text style={styles.shapTitle}>Why selected</Text>
-                            {d.whySelected.map((line, i) => (
-                              <Text key={i} style={styles.explainLine}>· {line}</Text>
-                            ))}
-                          </View>
-                        )}
-                        {d.analystNote ? (
-                          <View style={{ marginTop: 8 }}>
-                            <Text style={styles.shapTitle}>Analyst note</Text>
-                            <Text style={styles.explainBox}>{d.analystNote}</Text>
-                          </View>
-                        ) : null}
-                      </View>
-                    );
-                  })() : null}
-                  <View style={[styles.rowGap, { flexDirection: "row", gap: 8 }]}>
-                    <Pressable
-                      style={[styles.actionBtn, { backgroundColor: theme.colors.primaryContainer, flex: 1 }]}
-                      onPress={() => setHoldingModal({ symbol: sym })}
-                    >
-                      <Text style={[styles.actionBtnTxt, { color: theme.colors.onPrimaryContainer }]}>Do this</Text>
-                    </Pressable>
-                    <Pressable
-                      style={[styles.actionBtn, { backgroundColor: reminderSyms.has(sym) ? theme.colors.secondaryContainer : theme.colors.surfaceContainerHigh, flex: 1 }]}
-                      onPress={() => setReminderSyms((prev) => { const n = new Set(prev); n.has(sym) ? n.delete(sym) : n.add(sym); return n; })}
-                    >
-                      <Text style={[styles.actionBtnTxt, { color: reminderSyms.has(sym) ? theme.colors.onSecondaryContainer : theme.colors.onSurfaceVariant }]}>
-                        {reminderSyms.has(sym) ? "Reminded ✓" : "Remind me"}
-                      </Text>
-                    </Pressable>
-                    <Pressable
-                      style={[styles.actionBtn, { backgroundColor: theme.colors.errorContainer, flex: 1 }]}
-                      onPress={() => { setDismissedSyms((prev) => { const n = new Set(prev); n.add(sym); return n; }); setExpandedSym(null); }}
-                    >
-                      <Text style={[styles.actionBtnTxt, { color: theme.colors.onErrorContainer }]}>Not for me</Text>
-                    </Pressable>
-                  </View>
-                </>
-              ) : null}
-            </ExpandableCard>
+                <View style={styles.scorePill}>
+                  <Text style={styles.scoreText}>Score {String(item.score ?? "—")}</Text>
+                </View>
+              </View>
+              {confidence !== null ? <Text style={styles.meta}>{Math.round(confidence)}% analytical confidence</Text> : null}
+              {item.why_shown_one_line ? <Text style={styles.body}>{item.why_shown_one_line}</Text> : null}
+              <FinancialGuidanceNotice compact />
+              <Button title="View evidence and risks" onPress={() => openDetails(item)} tone="secondary" />
+            </View>
           );
-        })
-      ) : (
-        <Text style={styles.mutedText}>No recommendations yet. Save preferences and tap Run now.</Text>
-      )}
+        })}
+      </ScrollView>
 
-      {currentPage < totalPages ? (
-        <Button
-          title={loadingMore ? "Loading..." : `Load more (${currentPage}/${totalPages})`}
-          onPress={() => fetchLatest(currentPage + 1, true)}
-          loading={loadingMore}
-          disabled={loadingMore}
-          tone="secondary"
-        />
-      ) : null}
-
-      <Modal visible={holdingModal !== null} transparent animationType="slide">
+      <Modal visible={selected !== null} animationType="slide" transparent onRequestClose={() => setSelected(null)}>
         <View style={styles.modalBackdrop}>
           <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>Add {holdingModal?.symbol}</Text>
-            <Text style={styles.label}>Quantity</Text>
-            <Input value={hqty} onChangeText={setHqty} keyboardType="decimal-pad" />
-            <Text style={[styles.label, { marginTop: 10 }]}>Average cost (USD)</Text>
-            <Input value={hcost} onChangeText={setHcost} keyboardType="decimal-pad" placeholder="0.00" />
-            <View style={styles.modalActions}>
+            <View style={styles.resultHeader}>
               <View style={{ flex: 1 }}>
-                <Button title="Cancel" tone="secondary" onPress={() => setHoldingModal(null)} disabled={holdingBusy} />
+                <Text style={styles.title}>{selected?.symbol ?? "Details"}</Text>
+                <Text style={styles.cardSub}>Evidence, limitations, and risk context</Text>
               </View>
-              <View style={{ flex: 1 }}>
-                <Button title="Save" onPress={submitHolding} loading={holdingBusy} disabled={holdingBusy} />
-              </View>
+              <Pressable style={styles.iconButton} onPress={() => setSelected(null)}>
+                <MaterialCommunityIcons name="close" size={20} color={theme.colors.onSurface} />
+              </Pressable>
             </View>
+            <FinancialGuidanceNotice />
+            <ScrollView style={{ marginTop: 12 }}>
+              {explainLoading ? <ActivityIndicator color={theme.colors.primary} /> : null}
+              {selected?.bull_case ? <><Text style={styles.label}>Potential upside context</Text><Text style={styles.body}>{selected.bull_case}</Text></> : null}
+              {selected?.bear_case ? <><Text style={styles.label}>Risk context</Text><Text style={styles.body}>{selected.bear_case}</Text></> : null}
+              {explain?.explanation?.analyst_note ? <><Text style={styles.label}>Analytical note</Text><Text style={styles.body}>{explain.explanation.analyst_note}</Text></> : null}
+              {(explain?.explanation?.why_selected ?? []).map((line, i) => <Text style={styles.bullet} key={`why-${i}`}>• {line}</Text>)}
+              {(explain?.explanation?.risk_notes ?? []).map((line, i) => <Text style={styles.bullet} key={`risk-${i}`}>• {line}</Text>)}
+              <Text style={styles.disclosureText}>{FINANCIAL_GUIDANCE_DISCLOSURE}</Text>
+            </ScrollView>
           </View>
         </View>
       </Modal>
-    </ScrollView>
+    </>
   );
 }
 
-const createStyles = (theme: AppTheme) => StyleSheet.create({
-  container: { flexGrow: 1, paddingHorizontal: 20, backgroundColor: theme.colors.background, gap: 14 },
-  headerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  backBtn: { width: 60 },
-  backText: { color: theme.colors.primary, fontFamily: "Inter_800ExtraBold" },
-  title: { fontSize: 22, fontFamily: "Inter_800ExtraBold", color: theme.colors.onSurface },
-  sectionK: {
-    fontSize: 11,
-    fontFamily: "Inter_800ExtraBold",
-    color: theme.colors.onSurfaceVariant,
-    letterSpacing: 0.8,
-    textTransform: "uppercase",
-  },
-  prefsCard: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.radii.lg,
-    borderWidth: 1,
-    borderColor: theme.colors.outlineVariant,
-    padding: 14,
-    gap: 8,
-    ...theme.shadows.sm,
-  },
-  label: { fontSize: 12, fontFamily: "Inter_700Bold", color: theme.colors.onSurfaceVariant },
-  chipRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
-  chip: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: theme.colors.outlineVariant,
-    backgroundColor: theme.colors.surface,
-  },
-  chipOn: { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary },
-  chipTxt: { fontSize: 12, fontFamily: "Inter_700Bold", color: theme.colors.onSurface },
-  chipTxtOn: { color: theme.colors.onPrimary },
-  switchRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginVertical: 8 },
-  switchLabel: { flex: 1, fontSize: 13, fontFamily: "Inter_500Medium", color: theme.colors.onSurface, marginRight: 12 },
-  actionsRow: { marginTop: 4 },
-  bannerCard: {
-    borderRadius: theme.radii.md,
-    borderWidth: 1,
-    padding: 12,
-    ...theme.shadows.sm,
-  },
-  bannerInfo: { backgroundColor: theme.colors.primaryContainer, borderColor: theme.colors.primary },
-  bannerWarn: { backgroundColor: theme.colors.tertiaryContainer, borderColor: theme.colors.tertiary },
-  bannerOk: { backgroundColor: theme.colors.secondaryContainer, borderColor: theme.colors.secondary },
-  bannerTitle: { fontSize: 13, fontFamily: "Inter_800ExtraBold", color: theme.colors.onSurface },
-  bannerText: { fontSize: 12, color: theme.colors.onSurfaceVariant, marginTop: 4 },
-  errorText: { color: theme.colors.error, fontFamily: "Inter_600SemiBold" },
-  cardOuter: { marginBottom: 6 },
-  rowInner: { flexDirection: "row", gap: 12, alignItems: "flex-start" },
-  rowTitle: { fontSize: 16, fontFamily: "Inter_800ExtraBold", color: theme.colors.onSurface },
-  fullName: { fontSize: 13, color: theme.colors.onSurfaceVariant, marginTop: 3 },
-  subText: { fontSize: 12, color: theme.colors.onSurfaceVariant, marginTop: 6 },
-  metaText: { fontSize: 12, color: theme.colors.secondary, marginTop: 6 },
-  scoreText: { fontSize: 12, fontFamily: "Inter_800ExtraBold", color: theme.colors.onSurface },
-  confText: { fontSize: 12, fontFamily: "Inter_800ExtraBold", color: theme.colors.secondary, marginTop: 4 },
-  mutedText: { color: theme.colors.secondary, fontFamily: "Inter_400Regular" },
-  blockLabel: { fontSize: 11, fontFamily: "Inter_800ExtraBold", color: theme.colors.primary, marginTop: 4 },
-  blockBody: { fontSize: 12, color: theme.colors.onSurface, lineHeight: 18 },
-  explainBox: {
-    fontSize: 10,
-    fontFamily: "Inter_400Regular",
-    color: theme.colors.onSurfaceVariant,
-    backgroundColor: theme.colors.surfaceContainerLow,
-    padding: 10,
-    borderRadius: theme.radii.md,
-    maxHeight: 220,
-  },
-  rowGap: { marginTop: 8 },
-  explainSection: { marginTop: 8, gap: 0 },
-  shapBlock: { marginBottom: 8 },
-  shapTitle: { fontSize: 10, fontFamily: "Inter_800ExtraBold", color: theme.colors.onSurfaceVariant, textTransform: "uppercase", letterSpacing: 0.6, marginBottom: 6 },
-  shapRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 5 },
-  shapLabel: { width: 110, fontSize: 11, color: theme.colors.onSurfaceVariant },
-  shapTrack: { flex: 1, height: 6, backgroundColor: theme.colors.outlineVariant, borderRadius: 99, overflow: "hidden" },
-  shapFill: { height: "100%", borderRadius: 99 },
-  shapVal: { width: 46, fontSize: 11, textAlign: "right", fontVariant: ["tabular-nums"] },
-  shapMeta: { fontSize: 10, color: theme.colors.onSurfaceVariant, marginTop: 4, opacity: 0.7 },
-  explainLine: { fontSize: 12, color: theme.colors.onSurface, lineHeight: 17, marginBottom: 3 },
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.45)",
-    justifyContent: "center",
-    padding: 24,
-  },
-  modalCard: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.radii.lg,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: theme.colors.outlineVariant,
-    ...theme.shadows.md,
-  },
-  modalTitle: { fontSize: 18, fontFamily: "Inter_800ExtraBold", marginBottom: 12, color: theme.colors.onSurface },
-  modalActions: { flexDirection: "row", gap: 10, marginTop: 16 },
-  actionBtn: {
-    paddingVertical: 9,
-    paddingHorizontal: 10,
-    borderRadius: 8,
-    alignItems: "center" as const,
-    justifyContent: "center" as const,
-  },
-  actionBtnTxt: {
-    fontSize: 12,
-    fontFamily: "Inter_700Bold",
-    textAlign: "center" as const,
-  },
-});
+function createStyles(theme: AppTheme) {
+  return StyleSheet.create({
+    container: { paddingHorizontal: 16, gap: 14 },
+    header: { flexDirection: "row", gap: 12, alignItems: "center", marginBottom: 2 },
+    iconButton: { width: 38, height: 38, borderRadius: 9, borderWidth: 1, borderColor: theme.colors.outlineVariant, alignItems: "center", justifyContent: "center", backgroundColor: theme.colors.surface },
+    title: { fontSize: 24, fontFamily: "Inter_800ExtraBold", color: theme.colors.onSurface },
+    subtitle: { fontSize: 12, color: theme.colors.onSurfaceVariant, marginTop: 2 },
+    card: { backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.outlineVariant, borderRadius: 14, padding: 15, gap: 11 },
+    cardTitle: { fontSize: 16, fontFamily: "Inter_700Bold", color: theme.colors.onSurface },
+    cardSub: { fontSize: 11, lineHeight: 16, color: theme.colors.onSurfaceVariant },
+    label: { fontSize: 11, fontFamily: "Inter_700Bold", color: theme.colors.onSurface, marginTop: 4 },
+    chips: { flexDirection: "row", flexWrap: "wrap", gap: 7 },
+    chip: { borderWidth: 1, borderColor: theme.colors.outlineVariant, borderRadius: 999, paddingVertical: 7, paddingHorizontal: 11 },
+    chipActive: { backgroundColor: theme.colors.primaryContainer, borderColor: theme.colors.primary },
+    chipText: { textTransform: "capitalize", fontSize: 11, color: theme.colors.onSurfaceVariant, fontFamily: "Inter_600SemiBold" },
+    chipTextActive: { color: theme.colors.onPrimaryContainer },
+    financeToggle: { flexDirection: "row", alignItems: "center", gap: 8 },
+    financeCopy: { flex: 1, fontSize: 11, lineHeight: 16, color: theme.colors.onSurfaceVariant },
+    actions: { gap: 8 },
+    metric: { fontSize: 28, fontFamily: "Inter_800ExtraBold", color: theme.colors.onSurface },
+    error: { color: theme.colors.error, fontSize: 12 },
+    resultHeader: { flexDirection: "row", alignItems: "flex-start", gap: 10 },
+    symbol: { fontSize: 18, fontFamily: "Inter_800ExtraBold", color: theme.colors.onSurface },
+    scorePill: { backgroundColor: theme.colors.primaryContainer, borderRadius: 999, paddingVertical: 6, paddingHorizontal: 9 },
+    scoreText: { fontSize: 10, fontFamily: "Inter_700Bold", color: theme.colors.onPrimaryContainer },
+    meta: { fontSize: 10, color: theme.colors.primary, fontFamily: "Inter_600SemiBold" },
+    body: { fontSize: 12, lineHeight: 18, color: theme.colors.onSurface },
+    bullet: { fontSize: 12, lineHeight: 19, color: theme.colors.onSurfaceVariant, marginBottom: 4 },
+    disclosureText: { fontSize: 11, lineHeight: 16, fontFamily: "Inter_700Bold", color: theme.colors.onTertiaryContainer, marginTop: 14 },
+    modalBackdrop: { flex: 1, backgroundColor: "rgba(9,20,38,0.56)", justifyContent: "flex-end" },
+    modalCard: { maxHeight: "86%", backgroundColor: theme.colors.surface, borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 18 },
+  });
+}
